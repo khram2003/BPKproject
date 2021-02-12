@@ -1,5 +1,6 @@
 #include <iostream>
 
 int main() {
-    std::cout << "Client started\n";
+    std::cout << "Client started" << std::endl;
+    return 0;
 }
