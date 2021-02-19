@@ -6,5 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 
 add_subdirectory(model)
+include_directories(model model.h)
 add_subdirectory(client)
 add_subdirectory(server)
