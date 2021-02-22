@@ -5,16 +5,16 @@
 #include <chrono>
 #include <iostream>
 
-using namespace date;
-using namespace std::chrono;
-
 namespace model {
+
 class Message {
 private:
-    year_month_day message_date =
-        year_month_day{floor<days>(system_clock::now())};
-    hh_mm_ss<duration<long long, std::ratio<1, 1000000000>>> message_time =
-        make_time(system_clock::now() - floor<days>(system_clock::now()));
+    date::year_month_day message_date = date::year_month_day{
+        date::floor<date::days>(std::chrono::system_clock::now())};
+    date::hh_mm_ss<std::chrono::duration<long long, std::ratio<1, 1000000000>>>
+        message_time = date::make_time(
+            std::chrono::system_clock::now() -
+            date::floor<date::days>(std::chrono::system_clock::now()));
     std::size_t sender_id = 0;
     std::size_t recipient_id = 0;
     std::string message_text;
@@ -30,16 +30,17 @@ public:
           message_text(std::move(message_text_)) {
     }
 
-    hh_mm_ss<duration<long long, std::ratio<1, 1000000000>>> get_message_time()
-        const;
+    [[nodiscard]] date::hh_mm_ss<
+        std::chrono::duration<long long, std::ratio<1, 1000000000>>>
+    get_message_time() const;
 
-    year_month_day get_message_date() const;
+    [[nodiscard]] date::year_month_day get_message_date() const;
 
-    std::string get_message_text() const;
+    [[nodiscard]] std::string get_message_text() const;
 
-    std::size_t get_sender_id() const;
+    [[nodiscard]] std::size_t get_sender_id() const;
 
-    std::size_t get_recipient_id() const;
+    [[nodiscard]] std::size_t get_recipient_id() const;
 };
 }  // namespace model
 

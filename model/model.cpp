@@ -6,12 +6,12 @@
 #include <string>
 
 namespace model {
-hh_mm_ss<duration<long long, std::ratio<1, 1000000000>>>
+date::hh_mm_ss<std::chrono::duration<long long, std::ratio<1, 1000000000>>>
 Message::get_message_time() const {
     return message_time;
 }
 
-year_month_day Message::get_message_date() const {
+date::year_month_day Message::get_message_date() const {
     return message_date;
 }
 

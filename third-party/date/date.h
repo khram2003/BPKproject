@@ -1,10 +1,5 @@
 #ifndef DATE_H
 #define DATE_H
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-bool std::uncaught_exception() noexcept;
-
 // The MIT License (MIT)
 //
 // Copyright (c) 2015, 2016, 2017 Howard Hinnant
@@ -87,6 +82,10 @@ bool std::uncaught_exception() noexcept;
 // warning C4127: conditional expression is constant
 #   pragma warning(disable : 4127)
 #endif
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+bool std::uncaught_exception() noexcept;
 
 namespace date
 {
