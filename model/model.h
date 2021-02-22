@@ -12,7 +12,7 @@ namespace model {
     class Message {
     private:
         year_month_day message_date = year_month_day{floor<days>(system_clock::now())};
-        hh_mm_ss<std::chrono::duration<long long, std::ratio<1, 1000000000>>> message_time = make_time(
+        hh_mm_ss<duration<long long, std::ratio<1, 1000000000>>> message_time = make_time(
                 system_clock::now() - floor<days>(system_clock::now()));
         std::size_t sender_id = 0;
         std::size_t recipient_id = 0;
@@ -30,7 +30,7 @@ namespace model {
                                                                                                                          message_text_)) {}
 
 
-        hh_mm_ss<std::chrono::duration<long long, std::ratio<1, 1000000000>>> get_message_time() const;
+        hh_mm_ss<duration<long long, std::ratio<1, 1000000000>>> get_message_time() const;
 
         year_month_day get_message_date() const;
 
