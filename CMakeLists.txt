@@ -3,8 +3,11 @@ project(BPKproject)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 
+find_package(PostgreSQL)
+
+include_directories(third-party/date third-party/libpqxx-7.3.1/include)
+add_subdirectory(third-party/libpqxx-7.3.1)
 add_subdirectory(model)
 include_directories(model)
 add_subdirectory(client)
