@@ -1,5 +1,5 @@
-#include <iostream>
 #include <model.h>
+#include <iostream>
 
 int main() {
     model::Message msg(1, 2, "hello");
@@ -12,7 +12,8 @@ int main() {
     std::cout << "  From #" << sender_id << std::endl;
     std::cout << "  To #" << recipient_id << std::endl;
     std::cout << "  Text: " << text << std::endl;
-    std::cout << "  Sent on: " << weekday{date} << ' ' << date.month() << ' ' << date.day() << ' ' << time << ' ' << date.year() << std::endl;
+    std::cout << "  Sent on: " << weekday{date} << ' ' << date.month() << ' '
+              << date.day() << ' ' << time << ' ' << date.year() << std::endl;
     std::cout << "Server started" << std::endl;
     return 0;
 }
