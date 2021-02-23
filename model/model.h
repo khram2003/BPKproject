@@ -30,8 +30,7 @@ public:
           message_text(std::move(message_text_)) {
     }
 
-    [[nodiscard]] date::hh_mm_ss<
-        std::chrono::duration<long long, std::ratio<1, 1000000000>>>
+    [[nodiscard]] date::hh_mm_ss<std::chrono::system_clock::duration>
     get_message_time() const;
 
     [[nodiscard]] date::year_month_day get_message_date() const;
