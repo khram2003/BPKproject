@@ -11,7 +11,7 @@ class Message {
 private:
     date::year_month_day message_date = date::year_month_day{
         date::floor<date::days>(std::chrono::system_clock::now())};
-    date::hh_mm_ss<std::chrono::duration<long long, std::ratio<1, 1000000000>>>
+    date::hh_mm_ss<std::chrono::system_clock::duration>
         message_time = date::make_time(
             std::chrono::system_clock::now() -
             date::floor<date::days>(std::chrono::system_clock::now()));
