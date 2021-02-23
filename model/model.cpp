@@ -6,7 +6,7 @@
 #include <string>
 
 namespace model {
-date::hh_mm_ss<std::chrono::duration<long long, std::ratio<1, 1000000000>>>
+date::hh_mm_ss<std::chrono::system_clock::duration>
 Message::get_message_time() const {
     return message_time;
 }
