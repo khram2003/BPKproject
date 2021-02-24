@@ -4,6 +4,7 @@
 #include <date.h>
 #include <chrono>
 #include <iostream>
+#include <pqxx/pqxx>
 
 namespace model {
 class Message {
@@ -41,7 +42,12 @@ public:
     [[nodiscard]] std::size_t get_recipient_id() const;
 };
 
-void try_connection();
+class Database {
+public:
+    void connect_to_database(pqxx::connection &C);
+
+    void create_table(pqxx::connection &C/*, pqxx::result &R*/);
+};
 
 }  // namespace model
 
