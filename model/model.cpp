@@ -27,15 +27,24 @@ std::size_t Message::get_recipient_id() const {
     return recipient_id;
 }
 
-void try_connection() {
+void Database::connect_to_database(pqxx::connection &C) {
     try {
-        pqxx::connection C;
         std::cout << "Connected to " << C.dbname() << std::endl;
-        pqxx::work W{C};
     } catch (std::exception const &e) {
         std::cerr << e.what() << '\n';
         return;
     }
 }
 
+void Database::create_table(pqxx::connection &C/*, pqxx::result &R*/) {
+    pqxx::work W(C);
+    try {
+        W.exec("CREATE TABLE IF NOT EXISTS accounts (id INT PRIMARY KEY, balance INT)");
+        W.exec("INSERT INTO accounts (id, balance) VALUES (1, 1000), (2, 250)");
+        W.commit();
+        std::cout << "Created table" << std::endl;
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
+    }
+}
 }  // namespace model

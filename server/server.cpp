@@ -16,6 +16,10 @@ int main() {
               << ' ' << date.day() << ' ' << time << ' ' << date.year()
               << std::endl;
     std::cout << "Server started" << std::endl;
-    model::try_connection();
+    model::Database database;
+    pqxx::connection C("user=postgres password=12345");
+    database.connect_to_database(C);
+    pqxx::result R;
+    database.create_table(C/*, R*/);
     return 0;
 }
