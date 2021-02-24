@@ -40,6 +40,9 @@ public:
 
     [[nodiscard]] std::size_t get_recipient_id() const;
 };
+
+void try_connection();
+
 }  // namespace model
 
 #endif  // MODEL_H
