@@ -26,4 +26,16 @@ std::size_t Message::get_sender_id() const {
 std::size_t Message::get_recipient_id() const {
     return recipient_id;
 }
+
+void try_connection() {
+    try {
+        pqxx::connection C;
+        std::cout << "Connected to " << C.dbname() << std::endl;
+        pqxx::work W{C};
+    } catch (std::exception const &e) {
+        std::cerr << e.what() << '\n';
+        return;
+    }
+}
+
 }  // namespace model

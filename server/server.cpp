@@ -16,5 +16,6 @@ int main() {
               << ' ' << date.day() << ' ' << time << ' ' << date.year()
               << std::endl;
     std::cout << "Server started" << std::endl;
+    model::try_connection();
     return 0;
 }
