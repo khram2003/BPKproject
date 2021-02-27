@@ -27,24 +27,45 @@ std::size_t Message::get_recipient_id() const {
     return recipient_id;
 }
 
-void Database::connect_to_database(pqxx::connection &C) {
-    try {
-        std::cout << "Connected to " << C.dbname() << std::endl;
-    } catch (std::exception const &e) {
-        std::cerr << e.what() << '\n';
-        return;
-    }
-}
-
-void Database::create_table(pqxx::connection &C/*, pqxx::result &R*/) {
+void Database::add_message(std::size_t chat_id,
+                           std::size_t sender_id,
+                           std::size_t recipient_id,
+                           std::string &message_text) {
     pqxx::work W(C);
     try {
-        W.exec("CREATE TABLE IF NOT EXISTS accounts (id INT PRIMARY KEY, balance INT)");
-        W.exec("INSERT INTO accounts (id, balance) VALUES (1, 1000), (2, 250)");
-        W.commit();
-        std::cout << "Created table" << std::endl;
-    } catch (const std::exception &e) {
+        std::string insert_into =
+            "INSERT INTO Messages (chat_id, sender_id, recipient_id, "
+            "message_text) Values (" +
+            std::to_string(chat_id) + ", " + std::to_string(sender_id) + ", " +
+            std::to_string(recipient_id) + ", '" + message_text + "')";
+        W.exec(insert_into);
+    } catch (std::exception const &e) {
         std::cerr << e.what() << std::endl;
+        throw;
     }
+    W.commit();
+}
+
+void Database::add_chat(std::string &chat_name) {
+    pqxx::work W(C);
+    try {
+        std::string insert_into = "INSERT INTO Chats (chat_name) Values ('" + chat_name + "')";
+        W.exec(insert_into);
+    } catch (std::exception const &e) {
+        std::cerr << e.what() << std::endl;
+        throw;
+    }
+    W.commit();
+}
+void Database::add_user(std::string &user_name) {
+    pqxx::work W(C);
+    try {
+        std::string insert_into = "INSERT INTO Users (user_name) Values ('" + user_name + "')";
+        W.exec(insert_into);
+    } catch (std::exception const &e) {
+        std::cerr << e.what() << std::endl;
+        throw;
+    }
+    W.commit();
 }
 }  // namespace model

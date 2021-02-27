@@ -16,10 +16,13 @@ int main() {
               << ' ' << date.day() << ' ' << time << ' ' << date.year()
               << std::endl;
     std::cout << "Server started" << std::endl;
-    model::Database database;
-    pqxx::connection C("user=postgres password=12345");
-    database.connect_to_database(C);
-    pqxx::result R;
-    database.create_table(C/*, R*/);
+    model::Database database(pqxx::connection("user=postgres password=12345"));
+    std::string chat_name = "first chat";
+    std::string user1 = "user 1";
+    std::string user2 = "user 2";
+    database.add_user(user1);
+    database.add_user(user2);
+    database.add_chat(chat_name);
+    database.add_message(1, sender_id, recipient_id, text);
     return 0;
 }

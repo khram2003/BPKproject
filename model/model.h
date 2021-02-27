@@ -43,10 +43,63 @@ public:
 };
 
 class Database {
-public:
-    void connect_to_database(pqxx::connection &C);
+private:
+    pqxx::connection C;
 
-    void create_table(pqxx::connection &C/*, pqxx::result &R*/);
+public:
+    Database(pqxx::connection &&C_) : C(std::move(C_)) {
+        pqxx::work W(C);
+        std::string create_table;
+        try {
+            create_table =
+                "CREATE TABLE IF NOT EXISTS Users (user_id BIGSERIAL NOT NULL "
+                "PRIMARY KEY, user_name VARCHAR(50))";
+            W.exec(create_table);
+        } catch (std::exception const &e) {
+            std::cerr << e.what() << std::endl;
+            throw;
+        }
+        try {
+            create_table =
+                "CREATE TABLE IF NOT EXISTS Chats (chat_id BIGSERIAL NOT NULL "
+                "PRIMARY KEY, chat_name VARCHAR(50))";
+            W.exec(create_table);
+        } catch (std::exception const &e) {
+            std::cerr << e.what() << std::endl;
+            throw;
+        }
+        try {
+            create_table =
+                "CREATE TABLE IF NOT EXISTS UserID_ChatID (user_id BIGINT NOT "
+                "NULL, chat_id BIGINT NOT NULL, FOREIGN KEY(user_id) "
+                "REFERENCES Users(user_id), FOREIGN KEY(chat_id) "
+                "REFERENCES Chats(chat_id))";
+            W.exec(create_table);
+        } catch (std::exception const &e) {
+            std::cerr << e.what() << std::endl;
+            throw;
+        }
+        try {
+            create_table =
+                "CREATE TABLE IF NOT EXISTS Messages (chat_id BIGINT NOT NULL, "
+                "sender_id BIGINT NOT NULL, recipient_id BIGINT NOT NULL, "
+                "message_text TEXT, FOREIGN KEY(chat_id) REFERENCES "
+                "Chats(chat_id), FOREIGN KEY(sender_id) REFERENCES "
+                "Users(user_id), FOREIGN KEY(recipient_id) REFERENCES "
+                "Users(user_id))";
+            W.exec(create_table);
+        } catch (std::exception const &e) {
+            std::cerr << e.what() << std::endl;
+            throw;
+        }
+        W.commit();
+    }
+
+    void add_message(std::size_t chat_id, std::size_t sender_id, std::size_t recipient_id, std::string &message_text);
+
+    void add_chat(std::string &chat_name);
+
+    void add_user(std::string &user_name);
 };
 
 }  // namespace model
