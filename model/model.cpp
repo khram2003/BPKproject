@@ -39,33 +39,35 @@ void Database::add_message(std::size_t chat_id,
             std::to_string(chat_id) + ", " + std::to_string(sender_id) + ", " +
             std::to_string(recipient_id) + ", '" + message_text + "')";
         W.exec(insert_into);
+        W.commit();
     } catch (std::exception const &e) {
         std::cerr << e.what() << std::endl;
         throw;
     }
-    W.commit();
 }
 
 void Database::add_chat(std::string &chat_name) {
     pqxx::work W(C);
     try {
-        std::string insert_into = "INSERT INTO Chats (chat_name) Values ('" + chat_name + "')";
+        std::string insert_into =
+            "INSERT INTO Chats (chat_name) Values ('" + chat_name + "')";
         W.exec(insert_into);
+        W.commit();
     } catch (std::exception const &e) {
         std::cerr << e.what() << std::endl;
         throw;
     }
-    W.commit();
 }
 void Database::add_user(std::string &user_name) {
     pqxx::work W(C);
     try {
-        std::string insert_into = "INSERT INTO Users (user_name) Values ('" + user_name + "')";
+        std::string insert_into =
+            "INSERT INTO Users (user_name) Values ('" + user_name + "')";
         W.exec(insert_into);
+        W.commit();
     } catch (std::exception const &e) {
         std::cerr << e.what() << std::endl;
         throw;
     }
-    W.commit();
 }
 }  // namespace model
