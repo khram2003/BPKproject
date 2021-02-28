@@ -2,5 +2,5 @@
 
 Contributors:
 @alexbuyan
-@Арсений
+@parseny
 @khram2003
