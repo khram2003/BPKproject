@@ -47,7 +47,7 @@ private:
     pqxx::connection C;
 
 public:
-    Database(pqxx::connection &&C_) : C(std::move(C_)) {
+    explicit Database(pqxx::connection &&C_) : C(std::move(C_)) {
         pqxx::work W(C);
         std::string create_table;
         try {
