@@ -24,6 +24,5 @@ int main() {
     database.add_user(user2);
     database.add_chat(chat_name);
     database.add_message(1, sender_id, recipient_id, text);
-    //database.add_message(100, sender_id, recipient_id, text);
     return 0;
 }

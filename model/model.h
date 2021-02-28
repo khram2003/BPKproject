@@ -53,7 +53,7 @@ public:
         try {
             create_table =
                 "CREATE TABLE IF NOT EXISTS Users (user_id BIGSERIAL NOT NULL "
-                "PRIMARY KEY, user_name VARCHAR(50))";
+                "PRIMARY KEY, user_name VARCHAR(50) NOT NULL UNIQUE)";
             W.exec(create_table);
         } catch (std::exception const &e) {
             std::cerr << e.what() << std::endl;
@@ -62,7 +62,7 @@ public:
         try {
             create_table =
                 "CREATE TABLE IF NOT EXISTS Chats (chat_id BIGSERIAL NOT NULL "
-                "PRIMARY KEY, chat_name VARCHAR(50))";
+                "PRIMARY KEY, chat_name VARCHAR(50) NOT NULL UNIQUE)";
             W.exec(create_table);
         } catch (std::exception const &e) {
             std::cerr << e.what() << std::endl;
@@ -95,7 +95,10 @@ public:
         W.commit();
     }
 
-    void add_message(std::size_t chat_id, std::size_t sender_id, std::size_t recipient_id, std::string &message_text);
+    void add_message(std::size_t chat_id,
+                     std::size_t sender_id,
+                     std::size_t recipient_id,
+                     std::string &message_text);
 
     void add_chat(std::string &chat_name);
 
