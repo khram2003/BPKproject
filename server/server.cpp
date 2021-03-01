@@ -64,8 +64,9 @@ public:
             std::string insert_into =
                 "INSERT INTO Messages (chat_id, sender_id, recipient_id, "
                 "message_text) Values (" +
-                std::to_string(chat_id) + ", " + std::to_string(sender_id) + ", " +
-                std::to_string(recipient_id) + ", '" + message_text + "')";
+                std::to_string(chat_id) + ", " + std::to_string(sender_id) +
+                ", " + std::to_string(recipient_id) + ", '" + message_text +
+                "')";
             W.exec(insert_into);
             W.commit();
         } catch (std::exception const &e) {
@@ -115,11 +116,13 @@ int main() {
               << ' ' << date.day() << ' ' << time << ' ' << date.year()
               << std::endl;
     std::cout << "Server started" << std::endl;
-    Database database(pqxx::connection("user=postgres password=12345")); //пока подключение к localhost
+    Database database(pqxx::connection(
+        "user=postgres password=12345"));  //пока подключение к localhost
     std::string chat_name = "first chat";
     std::string user1 = "user 1";
     std::string user2 = "user 2";
-    database.add_user(user1); //работает 1 раз, так как у каждого пользователя уникальный ID
+    database.add_user(
+        user1);  //работает 1 раз, так как у каждого пользователя уникальный ID
     database.add_user(user2);
     database.add_chat(chat_name);
     database.add_message(1, sender_id, recipient_id, text);
