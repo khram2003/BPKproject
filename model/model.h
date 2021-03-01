@@ -4,7 +4,6 @@
 #include <date.h>
 #include <chrono>
 #include <iostream>
-#include <pqxx/pqxx>
 
 namespace model {
 class Message {
@@ -41,70 +40,6 @@ public:
 
     [[nodiscard]] std::size_t get_recipient_id() const;
 };
-
-class Database {
-private:
-    pqxx::connection C;
-
-public:
-    explicit Database(pqxx::connection &&C_) : C(std::move(C_)) {
-        pqxx::work W(C);
-        std::string create_table;
-        try {
-            create_table =
-                "CREATE TABLE IF NOT EXISTS Users (user_id BIGSERIAL NOT NULL "
-                "PRIMARY KEY, user_name VARCHAR(50) NOT NULL UNIQUE)";
-            W.exec(create_table);
-        } catch (std::exception const &e) {
-            std::cerr << e.what() << std::endl;
-            throw;
-        }
-        try {
-            create_table =
-                "CREATE TABLE IF NOT EXISTS Chats (chat_id BIGSERIAL NOT NULL "
-                "PRIMARY KEY, chat_name VARCHAR(50) NOT NULL UNIQUE)";
-            W.exec(create_table);
-        } catch (std::exception const &e) {
-            std::cerr << e.what() << std::endl;
-            throw;
-        }
-        try {
-            create_table =
-                "CREATE TABLE IF NOT EXISTS UserID_ChatID (user_id BIGINT NOT "
-                "NULL, chat_id BIGINT NOT NULL, FOREIGN KEY(user_id) "
-                "REFERENCES Users(user_id), FOREIGN KEY(chat_id) "
-                "REFERENCES Chats(chat_id))";
-            W.exec(create_table);
-        } catch (std::exception const &e) {
-            std::cerr << e.what() << std::endl;
-            throw;
-        }
-        try {
-            create_table =
-                "CREATE TABLE IF NOT EXISTS Messages (chat_id BIGINT NOT NULL, "
-                "sender_id BIGINT NOT NULL, recipient_id BIGINT NOT NULL, "
-                "message_text TEXT, FOREIGN KEY(chat_id) REFERENCES "
-                "Chats(chat_id), FOREIGN KEY(sender_id) REFERENCES "
-                "Users(user_id), FOREIGN KEY(recipient_id) REFERENCES "
-                "Users(user_id))";
-            W.exec(create_table);
-        } catch (std::exception const &e) {
-            std::cerr << e.what() << std::endl;
-            throw;
-        }
-        W.commit();
-    }
-
-    void add_message(std::size_t chat_id,
-                     std::size_t sender_id,
-                     std::size_t recipient_id,
-                     std::string &message_text);
-
-    void add_chat(std::string &chat_name);
-
-    void add_user(std::string &user_name);
-};
-
 }  // namespace model
 
 #endif  // MODEL_H
