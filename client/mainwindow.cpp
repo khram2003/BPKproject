@@ -1,18 +1,18 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include<QShortcut>
+#include <QMainWindow>
 #include <QListWidgetItem>
 #include <QBrush>
 #include <QColor>
 #include <QFont>
 #include <QPixmap>
+#include <QPushButton>
 
 //хочется сделать отдельный класс для сообщения и что нибудь с путями к картинкам
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-{
+        : QMainWindow(parent), ui(new Ui::MainWindow) {
     QPixmap sendButtonPixmap("C:/messenger/Sprites/sendButton.png");
     QPixmap avatarPixmap("");
     QIcon sendButtonIcon(sendButtonPixmap);
@@ -22,11 +22,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->sendButton1->setIconSize(sendButtonPixmap.rect().size());
     ui->sendButton2->setIconSize(sendButtonPixmap.rect().size());
 
-    connect(ui->sendButton1, &QPushButton::clicked, [this]{
-        QListWidgetItem *item=new QListWidgetItem;
-        QIcon *avatar=new QIcon("C:/messenger/Sprites/qwertyuiop.jpg");
+    connect(ui->sendButton1, &QPushButton::clicked, [this] {
+        auto *item = new QListWidgetItem;
+        auto *avatar = new QIcon("C:/messenger/Sprites/qwertyuiop.jpg");
         item->setText(ui->lineEdit->text());
-        QColor messageBg(0,51,102);
+        QColor messageBg(0, 51, 102);
         QBrush messageBrush(messageBg);
         item->setBackground(messageBrush);
         //item->setTextAlignment(Qt::AlignVCenter); //Хочется два параметра Alignment
@@ -41,11 +41,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     });
 
-    connect(ui->sendButton2, &QPushButton::clicked, [this]{
-        QListWidgetItem *item=new QListWidgetItem;
-        QIcon *avatar=new QIcon("C:/Users/Никита/Desktop/trash/qwertyuiop.jpg");
+    connect(ui->sendButton2, &QPushButton::clicked, [this] {
+        auto *item = new QListWidgetItem;
+        auto *avatar = new QIcon("C:/Users/Никита/Desktop/trash/qwertyuiop.jpg");
         item->setText(ui->lineEdit->text());
-        QColor messageBg(0,51,102);
+        QColor messageBg(0, 51, 102);
         QBrush messageBrush(messageBg);
         item->setBackground(messageBrush);
         //item->setTextAlignment(Qt::AlignVCenter); //Хочется два параметра Alignment
@@ -62,8 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
     });
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
 }
 
