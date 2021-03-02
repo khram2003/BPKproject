@@ -1,9 +1,105 @@
-#include <WS2tcpip.h>
 #include <model.h>
-#include <functional>
 #include <iostream>
-//#pragma comment(lib, "ws2_32.lib")
-#define ASIO_STANDALONE
+#include <pqxx/pqxx>
+
+class Database {
+private:
+    pqxx::connection C;
+
+public:
+    explicit Database(pqxx::connection &&C_) : C(std::move(C_)) {
+        pqxx::work W(C);
+        std::string create_table;
+        try {
+            create_table =
+                "CREATE TABLE IF NOT EXISTS Users (user_id BIGSERIAL NOT NULL "
+                "PRIMARY KEY, user_name VARCHAR(50) NOT NULL UNIQUE)";
+            W.exec(create_table);
+        } catch (std::exception const &e) {
+            std::cerr << e.what() << std::endl;
+            throw;
+        }
+        try {
+            create_table =
+                "CREATE TABLE IF NOT EXISTS Chats (chat_id BIGSERIAL NOT NULL "
+                "PRIMARY KEY, chat_name VARCHAR(50) NOT NULL UNIQUE)";
+            W.exec(create_table);
+        } catch (std::exception const &e) {
+            std::cerr << e.what() << std::endl;
+            throw;
+        }
+        try {
+            create_table =
+                "CREATE TABLE IF NOT EXISTS UserID_ChatID (user_id BIGINT NOT "
+                "NULL, chat_id BIGINT NOT NULL, FOREIGN KEY(user_id) "
+                "REFERENCES Users(user_id), FOREIGN KEY(chat_id) "
+                "REFERENCES Chats(chat_id))";
+            W.exec(create_table);
+        } catch (std::exception const &e) {
+            std::cerr << e.what() << std::endl;
+            throw;
+        }
+        try {
+            create_table =
+                "CREATE TABLE IF NOT EXISTS Messages (chat_id BIGINT NOT NULL, "
+                "sender_id BIGINT NOT NULL, recipient_id BIGINT NOT NULL, "
+                "message_text TEXT, FOREIGN KEY(chat_id) REFERENCES "
+                "Chats(chat_id), FOREIGN KEY(sender_id) REFERENCES "
+                "Users(user_id), FOREIGN KEY(recipient_id) REFERENCES "
+                "Users(user_id))";
+            W.exec(create_table);
+        } catch (std::exception const &e) {
+            std::cerr << e.what() << std::endl;
+            throw;
+        }
+        W.commit();
+    }
+
+    void add_message(std::size_t chat_id,
+                     std::size_t sender_id,
+                     std::size_t recipient_id,
+                     std::string &message_text) {
+        pqxx::work W(C);
+        try {
+            std::string insert_into =
+                "INSERT INTO Messages (chat_id, sender_id, recipient_id, "
+                "message_text) Values (" +
+                std::to_string(chat_id) + ", " + std::to_string(sender_id) +
+                ", " + std::to_string(recipient_id) + ", '" + message_text +
+                "')";
+            W.exec(insert_into);
+            W.commit();
+        } catch (std::exception const &e) {
+            std::cerr << e.what() << std::endl;
+            throw;
+        }
+    }
+
+    void add_chat(std::string &chat_name) {
+        pqxx::work W(C);
+        try {
+            std::string insert_into =
+                "INSERT INTO Chats (chat_name) Values ('" + chat_name + "')";
+            W.exec(insert_into);
+            W.commit();
+        } catch (std::exception const &e) {
+            std::cerr << e.what() << std::endl;
+            throw;
+        }
+    }
+    void add_user(std::string &user_name) {
+        pqxx::work W(C);
+        try {
+            std::string insert_into =
+                "INSERT INTO Users (user_name) Values ('" + user_name + "')";
+            W.exec(insert_into);
+            W.commit();
+        } catch (std::exception const &e) {
+            std::cerr << e.what() << std::endl;
+            throw;
+        }
+    }
+};
 
 int main() {
     model::Message msg(1, 2, "hello");
@@ -20,34 +116,15 @@ int main() {
               << ' ' << date.day() << ' ' << time << ' ' << date.year()
               << std::endl;
     std::cout << "Server started" << std::endl;
-
-    WSAData wsaData;
-    WORD DLLVersion = MAKEWORD(2, 1);
-    if (WSAStartup(DLLVersion, &wsaData) != 0) {
-        std::cout << "Error" << std::endl;
-        exit(1);
-    }
-    SOCKADDR_IN addr;  // хранение адреса
-    auto sizeofaddr = sizeof(addr);
-    addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    addr.sin_port = htons(1234);
-    addr.sin_family = AF_INET;
-
-    SOCKET sListen;
-    sListen = socket(AF_INET, SOCK_STREAM,
-                     0);  // исп семейстов интеренет протовколов. 2-й указывает
-                          // на протокол, устанавливающий соединение
-    bind(sListen, (SOCKADDR *)&addr, sizeof(addr));
-    listen(sListen, SOMAXCONN);
-
-    SOCKET newConnection;
-    newConnection = accept(sListen, (SOCKADDR *)&addr,
-                           reinterpret_cast<int *>(&sizeofaddr));
-
-    if (newConnection == 0) {
-        std::cout << "Error of connection" << std::endl;
-    } else {
-        std::cout << "Client connected" << std::endl;
-    }
+    Database database(pqxx::connection(
+        "user=postgres password=12345"));  //пока подключение к localhost
+    std::string chat_name = "first chat";
+    std::string user1 = "user 1";
+    std::string user2 = "user 2";
+    database.add_user(
+        user1);  //работает 1 раз, так как у каждого пользователя уникальный ID
+    database.add_user(user2);
+    database.add_chat(chat_name);
+    database.add_message(1, sender_id, recipient_id, text);
     return 0;
 }
