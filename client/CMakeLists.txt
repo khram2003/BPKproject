@@ -12,6 +12,7 @@ set(CMAKE_AUTOUIC OFF)
 set(CMAKE_AUTORCC ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_EXE_LINKER_FLAGS "-static")
 
 #find_package(Qt6 COMPONENTS Widgets REQUIRED)
 find_package(Qt6Core REQUIRED)
