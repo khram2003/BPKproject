@@ -145,8 +145,8 @@ public:
                 "SELECT chat_id, sender_id, recipient_id, message_text FROM "
                 "Messages";
             for (auto [id, sender_id, recipient_id, message_text] :
-                 W.stream<std::size_t, std::size_t, std::size_t, std::string>(
-                     query)) {
+                W.stream<std::size_t, std::size_t, std::size_t, std::string>(
+                    query)) {
                 if (id == chat_id) {
                     j.push_back(json{{"chat_id", chat_id},
                                      {"sender_id", sender_id},
@@ -167,7 +167,7 @@ public:
             json j;
             std::string query = "SELECT user_id, chat_id FROM UserID_ChatID";
             for (auto [id, chat_id] :
-                 W.stream<std::size_t, std::size_t>(query)) {
+                W.stream<std::size_t, std::size_t>(query)) {
                 if (id == user_id) {
                     j.push_back(json{{"chat_id", chat_id}});
                 }
@@ -202,15 +202,15 @@ void on_http(server *s, const websocketpp::connection_hdl &hdl) {
 void on_fail(server *s, const websocketpp::connection_hdl &hdl) {
     websocketpp::server<websocketpp::config::asio>::connection_ptr con =
         s->get_con_from_hdl(hdl);
-    [[maybe_unused]] websocketpp::lib::error_code ec = con->get_ec();
+    websocketpp::lib::error_code ec = con->get_ec();
     if (ec) {
         std::cerr << "Connection attempt by client failed because: "
                   << ec.message() << std::endl;
     }
 }
 void on_close(server *s, const websocketpp::connection_hdl &hdl) {
-    [[maybe_unused]] websocketpp::lib::error_code ec;
-    s->close(hdl, 404, "Websocket closed", ec);
+    websocketpp::lib::error_code ec;
+    s->close(hdl, 400, "Websocket closed", ec);
 }
 
 void on_message(server *s,
@@ -224,20 +224,31 @@ void on_message(server *s,
         s->stop_listening();
         return;
     }
+    std::string ECHO_CMD = "echo";
+    std::string FIND_USER_CMD = "find_user";
+    std::string GET_CHAT_HISTORY = "get_chat_history";
+    std::string GET_CHAT_LIST = "get_chat_list";
 
     try {
-        if (msg->get_payload().substr(0, 4) == "echo") {
-            s->send(hdl, msg->get_payload().substr(5), msg->get_opcode());
-        } else if (msg->get_payload().substr(0, 9) == "find_user") {
-            std::size_t user_id = std::stoi(msg->get_payload().substr(10));
+        if (msg->get_payload().substr(0, ECHO_CMD.size()) == "echo") {
+            s->send(hdl, msg->get_payload().substr(ECHO_CMD.size() + 1),
+                    msg->get_opcode());
+        } else if (msg->get_payload().substr(0, FIND_USER_CMD.size()) ==
+                   "find_user") {
+            std::size_t user_id =
+                std::stoi(msg->get_payload().substr(FIND_USER_CMD.size() + 1));
             std::string message = database->find_user(user_id);
             s->send(hdl, message, msg->get_opcode());
-        } else if (msg->get_payload().substr(0, 16) == "get_chat_history") {
-            std::size_t chat_id = std::stoi(msg->get_payload().substr(17));
+        } else if (msg->get_payload().substr(0, GET_CHAT_HISTORY.size()) ==
+                   "get_chat_history") {
+            std::size_t chat_id = std::stoi(
+                msg->get_payload().substr(GET_CHAT_HISTORY.size() + 1));
             std::string message = database->get_chat_history(chat_id);
             s->send(hdl, message, msg->get_opcode());
-        } else if (msg->get_payload().substr(0, 13) == "get_chat_list") {
-            std::size_t user_id = std::stoi(msg->get_payload().substr(14));
+        } else if (msg->get_payload().substr(0, GET_CHAT_LIST.size()) ==
+                   "get_chat_list") {
+            std::size_t user_id =
+                std::stoi(msg->get_payload().substr(GET_CHAT_LIST.size() + 1));
             std::string message = database->get_chat_list(user_id);
             s->send(hdl, message, msg->get_opcode());
         } else {
@@ -251,37 +262,8 @@ void on_message(server *s,
 }
 
 int main() {
-    model::Message msg(1, 2, "Привет");
-    auto time = msg.get_message_time();
-    auto date = msg.get_message_date();
-    auto sender_id = msg.get_sender_id();
-    auto recipient_id = msg.get_recipient_id();
-    auto text = msg.get_message_text();
-    std::cout << "Message created: " << std::endl;
-    std::cout << "  From #" << sender_id << std::endl;
-    std::cout << "  To #" << recipient_id << std::endl;
-    std::cout << "  Text: " << text << std::endl;
-    std::cout << "  Sent on: " << date::weekday{date} << ' ' << date.month()
-              << ' ' << date.day() << ' ' << time << ' ' << date.year()
-              << std::endl;
-    std::cout << "Server started" << std::endl;
     Database database(pqxx::connection(
         "user=postgres password=12345"));  //пока подключение к localhost
-    std::string chat_name = "first chat";
-    std::string user1 = "user 1";
-    std::string user2 = "user 2";
-//    database.add_user(
-//        user1);  //работает 1 раз, так как у каждого пользователя уникальный ID
-//    database.add_user(user2);
-//    database.add_chat(chat_name);
-    database.link_user_to_chat(1, 1);
-    database.link_user_to_chat(2, 1);
-    database.add_message(1, sender_id, recipient_id, text);
-    database.add_message(1, recipient_id, sender_id, text);
-    text = "Когда проверят дз по юниксу?";
-    database.add_message(1, sender_id, recipient_id, text);
-    text = "...";
-    database.add_message(1, recipient_id, sender_id, text);
 
     try {
         server server;
