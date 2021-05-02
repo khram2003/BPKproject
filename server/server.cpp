@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 #include <model.h>
 #include <iostream>
 #include <nlohmann/json.hpp>
