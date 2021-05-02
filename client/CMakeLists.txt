@@ -1,3 +1,5 @@
+set(CMAKE_CONFIGURATION_TYPES Debug;Release)
+
 cmake_minimum_required(VERSION 3.13)
 
 project(BPK VERSION 1.0.0 LANGUAGES CXX)
@@ -5,25 +7,16 @@ project(BPK VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(Qt6Core REQUIRED)
+find_package(Qt6Widgets REQUIRED)
+find_package(Qt6Gui REQUIRED)
+
 set(CMAKE_AUTOMOC ON)
-
 set(CMAKE_AUTOUIC OFF)
-
 set(CMAKE_AUTORCC ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_EXE_LINKER_FLAGS "-static")
 
-#find_package(Qt6 COMPONENTS Widgets REQUIRED)
-find_package(Qt6Core REQUIRED)
-find_package(Qt6Widgets REQUIRED)
-
-add_definitions(${Qt6Widgets_DEFINITIONS})
-include_directories(${Qt6Widgets_INCLUDES})
-
-include_directories(${CMAKE_SOURCE_DIR}/include)
-
-# Use Qt5 ressources
 set(RESOURCE resources.qrc)
 set(UI mainwindow.ui)
 qt6_wrap_ui(UI_HEADERS ${UI})
@@ -33,7 +26,6 @@ set(SOURCES
         src/mainwindow.cpp
         src/chat_view.cpp
         src/message_view.cpp
-        src/client.cpp
 
         include/mainwindow.h
         include/chat_view.h
@@ -45,3 +37,35 @@ add_executable(${PROJECT_NAME} ${UI} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} ${Qt6Widgets_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} Qt6::Core)
 target_link_libraries(${PROJECT_NAME} Qt6::Widgets)
+target_link_libraries(${PROJECT_NAME} Qt6::Gui)
+set_target_properties(
+        ${PROJECT_NAME}
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
+)
+
+set(QT_MINGW "C:/Qt/6.0.1/mingw81_64")
+
+if(WIN32)
+    if($<CONFIG:Debug>)
+        get_target_property(WIDGETDLL Qt6::Widgets IMPORTED_LOCATION_DEBUG)
+        get_target_property(COREDLL Qt6::Core IMPORTED_LOCATION_DEBUG)
+        get_target_property(GUIDLL Qt6::Gui IMPORTED_LOCATION_DEBUG)
+    else($<CONFIG:Debug>)
+        get_target_property(WIDGETLL Qt6::Widgets IMPORTED_LOCATION_RELEASE)
+        get_target_property(COREDLL Qt6::Core IMPORTED_LOCATION_RELEASE)
+        get_target_property(GUIDLL Qt6::Gui IMPORTED_LOCATION_RELEASE)
+    endif($<CONFIG:Debug>)
+    add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:Qt6::Widgets>
+            $<TARGET_FILE:Qt6::Core>
+            $<TARGET_FILE:Qt6::Gui>
+            ${QT_MINGW}/bin/libgcc_s_seh-1.dll
+            ${QT_MINGW}/bin/libstdc++-6.dll
+            ${QT_MINGW}/bin/libwinpthread-1.dll
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    )
+
+endif(WIN32)
