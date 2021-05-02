@@ -278,7 +278,7 @@ int main() {
                       << std::endl;
         } else if (command == "connect") {
             std::cout << "> Creating WebSocket..." << std::endl;
-            std::size_t connection_id = endpoint.connect("ws://srv6.yeptons.net:9002"); //todo fix this
+            std::size_t connection_id = endpoint.connect("ws://srv6.yeputons.net:9002"); //todo fix this
             if (connection_id != 0) {
                 std::cout << "> Created connection with id " << connection_id
                           << std::endl;
