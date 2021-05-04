@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <QStyleFactory>
-#include "../include/mainwindow.h"
+#include "mainwindow.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -8,7 +8,6 @@ int main(int argc, char *argv[]) {
     QApplication::setStyle(QStyleFactory::create("Fusion"));
     QPalette darkPalette;
 
-    // Настраиваем палитру для цветовых ролей элементов интерфейса
     darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
     darkPalette.setColor(QPalette::WindowText, Qt::white);
     darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));

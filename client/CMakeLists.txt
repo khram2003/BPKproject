@@ -32,17 +32,14 @@ set(SOURCES
         include/message_view.h
         )
 
-
 add_executable(${PROJECT_NAME} ${UI} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} ${Qt6Widgets_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} Qt6::Core)
-target_link_libraries(${PROJECT_NAME} Qt6::Widgets)
-target_link_libraries(${PROJECT_NAME} Qt6::Gui)
+target_link_libraries(${PROJECT_NAME} ${Qt6Widgets_LIBRARIES} Qt6::Core Qt6::Widgets Qt6::Gui)
 set_target_properties(
         ${PROJECT_NAME}
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
 )
+target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 set(QT_MINGW "C:/Qt/6.0.1/mingw81_64")
 

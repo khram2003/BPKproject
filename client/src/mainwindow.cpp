@@ -1,4 +1,4 @@
-#include "../include/mainwindow.h"
+#include "mainwindow.h"
 #include <QBrush>
 #include <QColor>
 #include <QFont>
@@ -7,8 +7,8 @@
 #include <QPixmap>
 #include <QPushButton>
 #include <QShortcut>
-#include "../include/chat_view.h"
-#include "../include/message_view.h"
+#include "chat_view.h"
+#include "message_view.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)

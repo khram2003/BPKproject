@@ -1,11 +1,11 @@
-#include "../include/message_view.h"
+#include "message_view.h"
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QSizePolicy>
 #include <QString>
 #include <QWidget>
 
-[[maybe_unused]] MessageViewOut::MessageViewOut(const QString& msg) {
+[[maybe_unused]] MessageViewOut::MessageViewOut(const QString &msg) {
     QHBoxLayout *row = new QHBoxLayout();
     QLabel *lbl = new QLabel;
     lbl->setStyleSheet(
@@ -20,7 +20,7 @@
     setLayout(row);
 }
 
-MessageViewIn::MessageViewIn(const QString& msg) {
+MessageViewIn::MessageViewIn(const QString &msg) {
     QHBoxLayout *row = new QHBoxLayout();
     QLabel *lbl = new QLabel;
     QLabel *lblim = new QLabel;
