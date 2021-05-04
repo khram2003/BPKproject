@@ -263,7 +263,7 @@ void on_message(server *s,
 
 int main() {
     Database database(pqxx::connection(
-        "user=postgres password=12345"));  //пока подключение к localhost
+        "user=buyantuev-alexander"));  //пока подключение к localhost
 
     try {
         server server;
