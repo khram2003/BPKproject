@@ -15,8 +15,8 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
+    std::unordered_map<QListWidgetItem*, std::size_t> itemptr_to_chatid;
     explicit MainWindow(QWidget *parent = nullptr);
-
     ~MainWindow() override;
 
 private slots:
