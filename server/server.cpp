@@ -18,8 +18,8 @@ public:
         std::string create_table;
         try {
             create_table =
-                "CREATE TABLE IF NOT EXISTS Users (user_id BIGSERIAL NOT NULL "
-                "PRIMARY KEY, user_name VARCHAR(50) NOT NULL UNIQUE)";
+                    "CREATE TABLE IF NOT EXISTS Users (user_id BIGSERIAL NOT NULL "
+                    "PRIMARY KEY, user_name VARCHAR(50) NOT NULL UNIQUE)";
             W.exec(create_table);
         } catch (std::exception const &e) {
             std::cerr << e.what() << std::endl;
@@ -27,8 +27,8 @@ public:
         }
         try {
             create_table =
-                "CREATE TABLE IF NOT EXISTS Chats (chat_id BIGSERIAL NOT NULL "
-                "PRIMARY KEY, chat_name VARCHAR(50) NOT NULL UNIQUE)";
+                    "CREATE TABLE IF NOT EXISTS Chats (chat_id BIGSERIAL NOT NULL "
+                    "PRIMARY KEY, chat_name VARCHAR(50) NOT NULL UNIQUE)";
             W.exec(create_table);
         } catch (std::exception const &e) {
             std::cerr << e.what() << std::endl;
@@ -36,10 +36,10 @@ public:
         }
         try {
             create_table =
-                "CREATE TABLE IF NOT EXISTS UserID_ChatID (user_id BIGINT NOT "
-                "NULL, chat_id BIGINT NOT NULL, FOREIGN KEY(user_id) "
-                "REFERENCES Users(user_id), FOREIGN KEY(chat_id) "
-                "REFERENCES Chats(chat_id))";
+                    "CREATE TABLE IF NOT EXISTS UserID_ChatID (user_id BIGINT NOT "
+                    "NULL, chat_id BIGINT NOT NULL, FOREIGN KEY(user_id) "
+                    "REFERENCES Users(user_id), FOREIGN KEY(chat_id) "
+                    "REFERENCES Chats(chat_id))";
             W.exec(create_table);
         } catch (std::exception const &e) {
             std::cerr << e.what() << std::endl;
@@ -47,12 +47,12 @@ public:
         }
         try {
             create_table =
-                "CREATE TABLE IF NOT EXISTS Messages (chat_id BIGINT NOT NULL, "
-                "sender_id BIGINT NOT NULL, recipient_id BIGINT NOT NULL, "
-                "message_text TEXT, FOREIGN KEY(chat_id) REFERENCES "
-                "Chats(chat_id), FOREIGN KEY(sender_id) REFERENCES "
-                "Users(user_id), FOREIGN KEY(recipient_id) REFERENCES "
-                "Users(user_id))";
+                    "CREATE TABLE IF NOT EXISTS Messages (chat_id BIGINT NOT NULL, "
+                    "sender_id BIGINT NOT NULL, recipient_id BIGINT NOT NULL, "
+                    "message_text TEXT, FOREIGN KEY(chat_id) REFERENCES "
+                    "Chats(chat_id), FOREIGN KEY(sender_id) REFERENCES "
+                    "Users(user_id), FOREIGN KEY(recipient_id) REFERENCES "
+                    "Users(user_id))";
             W.exec(create_table);
         } catch (std::exception const &e) {
             std::cerr << e.what() << std::endl;
@@ -68,11 +68,11 @@ public:
         pqxx::work W(C);
         try {
             std::string insert_into =
-                "INSERT INTO Messages (chat_id, sender_id, recipient_id, "
-                "message_text) Values (" +
-                std::to_string(chat_id) + ", " + std::to_string(sender_id) +
-                ", " + std::to_string(recipient_id) + ", '" + message_text +
-                "')";
+                    "INSERT INTO Messages (chat_id, sender_id, recipient_id, "
+                    "message_text) Values (" +
+                    std::to_string(chat_id) + ", " + std::to_string(sender_id) +
+                    ", " + std::to_string(recipient_id) + ", '" + message_text +
+                    "')";
             W.exec(insert_into);
             W.commit();
         } catch (std::exception const &e) {
@@ -85,7 +85,7 @@ public:
         pqxx::work W(C);
         try {
             std::string insert_into =
-                "INSERT INTO Chats (chat_name) Values ('" + chat_name + "')";
+                    "INSERT INTO Chats (chat_name) Values ('" + chat_name + "')";
             W.exec(insert_into);
             W.commit();
         } catch (std::exception const &e) {
@@ -98,7 +98,7 @@ public:
         pqxx::work W(C);
         try {
             std::string insert_into =
-                "INSERT INTO Users (user_name) Values ('" + user_name + "')";
+                    "INSERT INTO Users (user_name) Values ('" + user_name + "')";
             W.exec(insert_into);
             W.commit();
         } catch (std::exception const &e) {
@@ -111,8 +111,8 @@ public:
         pqxx::work W(C);
         try {
             std::string insert_into =
-                "INSERT INTO UserID_ChatID (user_id, chat_id) Values (" +
-                std::to_string(user_id) + ", " + std::to_string(chat_id) + ")";
+                    "INSERT INTO UserID_ChatID (user_id, chat_id) Values (" +
+                    std::to_string(user_id) + ", " + std::to_string(chat_id) + ")";
             W.exec(insert_into);
             W.commit();
         } catch (std::exception const &e) {
@@ -142,11 +142,11 @@ public:
         try {
             json j;
             std::string query =
-                "SELECT chat_id, sender_id, recipient_id, message_text FROM "
-                "Messages";
+                    "SELECT chat_id, sender_id, recipient_id, message_text FROM "
+                    "Messages";
             for (auto [id, sender_id, recipient_id, message_text] :
-                W.stream<std::size_t, std::size_t, std::size_t, std::string>(
-                    query)) {
+                    W.stream<std::size_t, std::size_t, std::size_t, std::string>(
+                            query)) {
                 if (id == chat_id) {
                     j.push_back(json{{"chat_id", chat_id},
                                      {"sender_id", sender_id},
@@ -167,7 +167,7 @@ public:
             json j;
             std::string query = "SELECT user_id, chat_id FROM UserID_ChatID";
             for (auto [id, chat_id] :
-                W.stream<std::size_t, std::size_t>(query)) {
+                    W.stream<std::size_t, std::size_t>(query)) {
                 if (id == user_id) {
                     j.push_back(json{{"chat_id", chat_id}});
                 }
@@ -201,7 +201,7 @@ void on_http(server *s, const websocketpp::connection_hdl &hdl) {
 
 void on_fail(server *s, const websocketpp::connection_hdl &hdl) {
     websocketpp::server<websocketpp::config::asio>::connection_ptr con =
-        s->get_con_from_hdl(hdl);
+            s->get_con_from_hdl(hdl);
     websocketpp::lib::error_code ec = con->get_ec();
     if (ec) {
         std::cerr << "Connection attempt by client failed because: "
@@ -236,19 +236,19 @@ void on_message(server *s,
         } else if (msg->get_payload().substr(0, FIND_USER_CMD.size()) ==
                    "find_user") {
             std::size_t user_id =
-                std::stoi(msg->get_payload().substr(FIND_USER_CMD.size() + 1));
+                    std::stoi(msg->get_payload().substr(FIND_USER_CMD.size() + 1));
             std::string message = database->find_user(user_id);
             s->send(hdl, message, msg->get_opcode());
         } else if (msg->get_payload().substr(0, GET_CHAT_HISTORY.size()) ==
                    "get_chat_history") {
             std::size_t chat_id = std::stoi(
-                msg->get_payload().substr(GET_CHAT_HISTORY.size() + 1));
+                    msg->get_payload().substr(GET_CHAT_HISTORY.size() + 1));
             std::string message = database->get_chat_history(chat_id);
             s->send(hdl, message, msg->get_opcode());
         } else if (msg->get_payload().substr(0, GET_CHAT_LIST.size()) ==
                    "get_chat_list") {
             std::size_t user_id =
-                std::stoi(msg->get_payload().substr(GET_CHAT_LIST.size() + 1));
+                    std::stoi(msg->get_payload().substr(GET_CHAT_LIST.size() + 1));
             std::string message = database->get_chat_list(user_id);
             s->send(hdl, message, msg->get_opcode());
         } else {
@@ -263,7 +263,7 @@ void on_message(server *s,
 
 int main() {
     Database database(pqxx::connection(
-        "user=postgres password=12345"));  //пока подключение к localhost
+            "user=buyantuev-alexander"));  //пока подключение к localhost
 
     try {
         server server;
@@ -274,7 +274,7 @@ int main() {
         server.set_fail_handler(bind(&on_fail, &server, ::_1));
         server.set_close_handler(bind(&on_close, &server, ::_1));
         server.set_message_handler(
-            bind(&on_message, &server, &database, ::_1, ::_2));
+                bind(&on_message, &server, &database, ::_1, ::_2));
         server.listen(9002);
         std::cout << "Listening on 9002" << std::endl;
         server.start_accept();
