@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QStyleFactory>
 #include "mainwindow.h"
+#include "auth.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -24,6 +25,8 @@ int main(int argc, char *argv[]) {
 
     QApplication::setPalette(darkPalette);
     MainWindow w;
+    auth au;
     w.show();
+    au.show();
     return QApplication::exec();
 }

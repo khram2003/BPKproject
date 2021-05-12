@@ -1,4 +1,4 @@
-set(CMAKE_CONFIGURATION_TYPES Debug;Release)
+set(CMAKE_CONFIGURATION_TYPES Debug)
 
 cmake_minimum_required(VERSION 3.13)
 
@@ -18,7 +18,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(RESOURCE resources.qrc)
-set(UI mainwindow.ui)
+set(UI mainwindow.ui auth.ui)
 qt6_wrap_ui(UI_HEADERS ${UI})
 
 set(SOURCES
@@ -26,10 +26,12 @@ set(SOURCES
         src/mainwindow.cpp
         src/chat_view.cpp
         src/message_view.cpp
+        src/auth.cpp
 
         include/mainwindow.h
         include/chat_view.h
         include/message_view.h
+        include/auth.h
         )
 
 add_executable(${PROJECT_NAME} ${UI} ${SOURCES})
@@ -49,7 +51,7 @@ if(WIN32)
         get_target_property(COREDLL Qt6::Core IMPORTED_LOCATION_DEBUG)
         get_target_property(GUIDLL Qt6::Gui IMPORTED_LOCATION_DEBUG)
     else($<CONFIG:Debug>)
-        get_target_property(WIDGETLL Qt6::Widgets IMPORTED_LOCATION_RELEASE)
+        get_target_property(WIDGETDLL Qt6::Widgets IMPORTED_LOCATION_RELEASE)
         get_target_property(COREDLL Qt6::Core IMPORTED_LOCATION_RELEASE)
         get_target_property(GUIDLL Qt6::Gui IMPORTED_LOCATION_RELEASE)
     endif($<CONFIG:Debug>)
