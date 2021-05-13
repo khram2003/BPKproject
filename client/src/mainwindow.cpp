@@ -21,7 +21,7 @@
 
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
+        : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
 
@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //TODO:теперь нужно распарсить id и получить имя чата (вопрос Сане).
     std::vector<std::pair<QString, std::size_t>> chat_names_id = {
-        {"Biba", 1}, {"Boba", 2}, {"Bobo", 3}};  // just for example, should be downloaded
+            {"Biba", 1}, {"Boba", 2}, {"Bobo", 3}};  // just for example, should be downloaded
 
     for (auto x : chat_names_id) {
         QListWidgetItem *item = new QListWidgetItem;
@@ -49,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->sendButton, &QPushButton::clicked, [this] {
         if ((ui->textEdit->toPlainText()).size() != 0) {
             ui->textEdit->setWordWrapMode(
-                QTextOption::WrapAtWordBoundaryOrAnywhere);
+                    QTextOption::WrapAtWordBoundaryOrAnywhere);
             QListWidgetItem *item = new QListWidgetItem;
             MessageViewIn *row = new MessageViewIn(ui->textEdit->toPlainText());
             row->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);

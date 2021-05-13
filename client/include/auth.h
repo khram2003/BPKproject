@@ -2,6 +2,7 @@
 #define AUTH_H
 
 #include <QDialog>
+#include <string>
 
 namespace Ui {
 class auth;

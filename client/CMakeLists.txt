@@ -27,23 +27,32 @@ set(SOURCES
         src/chat_view.cpp
         src/message_view.cpp
         src/auth.cpp
+        src/socket.cpp
+        src/user.cpp
 
         include/mainwindow.h
         include/chat_view.h
         include/message_view.h
         include/auth.h
+        include/socket.h
+        include/user.h
         )
 
+set(NETWORKING_LIBS)
+if (WIN32 AND NOT MSVC AND NOT BORLAND)
+    set(NETWORKING_LIBS "ws2_32")
+endif ()
+
 add_executable(${PROJECT_NAME} ${UI} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} ${Qt6Widgets_LIBRARIES} Qt6::Core Qt6::Widgets Qt6::Gui)
 set_target_properties(
         ${PROJECT_NAME}
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
 )
 target_include_directories(${PROJECT_NAME} PUBLIC include)
+target_link_libraries(${PROJECT_NAME} ${Qt6Widgets_LIBRARIES} Qt6::Core Qt6::Widgets Qt6::Gui ${NETWORKING_LIBS} ${Boost_LIBRARIES} pthread)
 
-set(QT_MINGW "C:/Qt/6.0.1/mingw81_64")
+set(QT_MINGW "C:/Qt/6.1.0/mingw81_64")
 
 if(WIN32)
     if($<CONFIG:Debug>)
@@ -66,5 +75,4 @@ if(WIN32)
             ${QT_MINGW}/bin/libwinpthread-1.dll
             $<TARGET_FILE_DIR:${PROJECT_NAME}>
     )
-
 endif(WIN32)

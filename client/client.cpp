@@ -58,12 +58,7 @@ public:
     }
 
     void on_message(websocketpp::connection_hdl, client::message_ptr msg) {
-        if (msg->get_opcode() == websocketpp::frame::opcode::text) {
-            m_messages.push_back("<< " + msg->get_payload());
-        } else {
-            m_messages.push_back(
-                "<< " + websocketpp::utility::to_hex(msg->get_payload()));
-        }
+        p = msg->get_payload();
     }
 
     [[nodiscard]] websocketpp::connection_hdl get_hdl() const {
@@ -173,15 +168,15 @@ public:
                 new_id, con->get_handle(), uri);
         m_connection_list[new_id] = metadata_ptr;
 
-        con->set_open_handler(bind(&connection_metadata::on_open, metadata_ptr,
-                                   &m_endpoint,
-                                   websocketpp::lib::placeholders::_1));
-        con->set_fail_handler(bind(&connection_metadata::on_fail, metadata_ptr,
-                                   &m_endpoint,
-                                   websocketpp::lib::placeholders::_1));
-        con->set_close_handler(bind(&connection_metadata::on_close,
-                                    metadata_ptr, &m_endpoint,
-                                    websocketpp::lib::placeholders::_1));
+//        con->set_open_handler(bind(&connection_metadata::on_open, metadata_ptr,
+//                                   &m_endpoint,
+//                                   websocketpp::lib::placeholders::_1));
+//        con->set_fail_handler(bind(&connection_metadata::on_fail, metadata_ptr,
+//                                   &m_endpoint,
+//                                   websocketpp::lib::placeholders::_1));
+//        con->set_close_handler(bind(&connection_metadata::on_close,
+//                                    metadata_ptr, &m_endpoint,
+//                                    websocketpp::lib::placeholders::_1));
         con->set_message_handler(bind(&connection_metadata::on_message,
                                       metadata_ptr,
                                       websocketpp::lib::placeholders::_1,
