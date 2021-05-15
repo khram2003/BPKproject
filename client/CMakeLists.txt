@@ -6,11 +6,12 @@ project(BPK VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "-lpthread")
 
 find_package(Qt6Core REQUIRED)
 find_package(Qt6Widgets REQUIRED)
 find_package(Qt6Gui REQUIRED)
-find_package(Boost REQUIRED COMPONENTS thread)
+find_package(Boost COMPONENTS thread system REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC OFF)
@@ -51,9 +52,10 @@ set_target_properties(
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
 )
 target_include_directories(${PROJECT_NAME} PUBLIC include)
-target_link_libraries(${PROJECT_NAME} ${Qt6Widgets_LIBRARIES} Qt6::Core Qt6::Widgets Qt6::Gui ${NETWORKING_LIBS} ${Boost_LIBRARIES} pthread)
+target_link_libraries(${PROJECT_NAME} ${Qt6Widgets_LIBRARIES} Qt6::Core Qt6::Widgets Qt6::Gui ${NETWORKING_LIBS} ${Boost_LIBRARIES})
 
 set(QT_MINGW "C:/Qt/6.1.0/mingw81_64")
+set(MINGW "C:/msys64/mingw64")
 
 if(WIN32)
     if($<CONFIG:Debug>)
@@ -72,8 +74,9 @@ if(WIN32)
             $<TARGET_FILE:Qt6::Core>
             $<TARGET_FILE:Qt6::Gui>
             ${QT_MINGW}/bin/libgcc_s_seh-1.dll
-            ${QT_MINGW}/bin/libstdc++-6.dll
+            ${MINGW}/bin/libstdc++-6.dll
             ${QT_MINGW}/bin/libwinpthread-1.dll
+            ${MINGW}/bin/libboost_thread-mt.dll
             $<TARGET_FILE_DIR:${PROJECT_NAME}>
     )
 endif(WIN32)

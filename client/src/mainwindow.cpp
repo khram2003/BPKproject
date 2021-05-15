@@ -11,14 +11,8 @@
 #include "chat_view.h"
 #include "message_view.h"
 #include "ui_mainwindow.h"
-//#include <pqxx/pqxx>
-//#include "../../server/server.cpp"
 #include <unordered_map>
-//#include <nlohmann/json.hpp>
-
-//Саня сделай хедер ёлы палы а то че мы как бомжи
-
-
+#include <socket.h>
 
 MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -59,6 +53,12 @@ MainWindow::MainWindow(QWidget *parent)
             ui->listWidget->setItemWidget(item, row);
             item->setSizeHint(row->sizeHint());
             item->setFont(QFont("Helvetica [Cronyx]", 12));
+            endpoint.p = std::promise<std::string>();
+            endpoint.send(1, "echo new message");
+            auto future = endpoint.p.get_future();
+            future.wait();
+            std::string s = future.get();
+            std::cout << s << std::endl;
             ui->textEdit->setPlainText("");
 //            database.add_message();
         }

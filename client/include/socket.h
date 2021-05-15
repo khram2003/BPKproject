@@ -8,6 +8,9 @@
 #include <websocketpp/config/asio_no_tls_client.hpp>
 #include <future>
 
+//using client = websocketpp::client<websocketpp::config::asio_client>;
+//using message_ptr = websocketpp::config::asio_client::message_type::ptr;
+
 class connection_metadata {
 private:
     std::size_t m_id;
@@ -19,21 +22,35 @@ private:
 
 public:
     using ptr = websocketpp::lib::shared_ptr<connection_metadata>;
+
+    void on_message(websocketpp::connection_hdl hdl,
+                    websocketpp::config::asio_client::message_type::ptr msg);
+
+    void on_open(websocketpp::client<websocketpp::config::asio_client> *c, websocketpp::connection_hdl hdl);
+
+    void on_fail(websocketpp::client<websocketpp::config::asio_client> *c, websocketpp::connection_hdl hdl);
+
+    void on_close(websocketpp::client<websocketpp::config::asio_client> *c, websocketpp::connection_hdl hdl);
+
+    [[nodiscard]] websocketpp::connection_hdl get_hdl() const;
+
+    [[nodiscard]] std::size_t get_id() const;
+
+    [[nodiscard]] std::string get_status() const;
+
+    connection_metadata(std::size_t id,
+                        websocketpp::connection_hdl hdl,
+                        std::string uri);
 };
 
 class websocket_endpoint {
 private:
-    using con_list = std::map<std::size_t, connection_metadata::ptr>;
-
     websocketpp::client<websocketpp::config::asio_client> m_endpoint;
     websocketpp::lib::shared_ptr<websocketpp::lib::thread> m_thread;
-
-    con_list m_connection_list;
+    connection_metadata::ptr metadata_ptr;
     std::size_t m_next_id;
 
 public:
-    std::unordered_map<std::string, std::size_t> username_connection_id;
-
     std::promise<std::string> p;
 
     websocket_endpoint();
@@ -41,6 +58,8 @@ public:
     std::size_t connect(std::string const &uri);
 
     void send(std::size_t id, const std::string &message);
+
+    ~websocket_endpoint();
 };
 
 extern websocket_endpoint endpoint;
