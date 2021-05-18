@@ -25,6 +25,6 @@ make server
 [json.hpp](https://github.com/nlohmann/json "nlohmann/json GitHub repository")
 
 ## Авторы
-Contributors: `@alexbuyan`, `@parseny`, `@khram`
+Contributors: [@alexbuyan](https://github.com/alexbuyan "Alexander Buyantuev"), [@parseny](https://github.com/parseny "Pimenov Arseny"), [@khram](https://github.com/khram "Khramov Nikita")
 
-Mentor: `@vasalf`
+Mentor: [@vasalf](https://github.com/vasalf "Vasily Alferov")
