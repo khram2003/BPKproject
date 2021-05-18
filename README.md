@@ -11,6 +11,9 @@ make server
 ./server/server
 ```
 
+## База данных
+В проекте используется PostgreSQL, установите эту СУБД на вашем сервере и измените подключение к БД в `server.cpp`
+
 ## Сборка под Windows
 Если у вас Windows поменяйте в `CMakeLists.txt` пути до `QT_MINGW` и `MINGW`
 
