@@ -19,7 +19,9 @@ make server
 
 ## Используемые библиотеки и фреймворки
 [QT](https://www.qt.io/ "QT")
+
 [websocketpp](https://github.com/zaphoyd/websocketpp/ "websocketpp GitHub repository")
+
 [json.hpp](https://github.com/nlohmann/json "nlohmann/json GitHub repository")
 
 ## Авторы
