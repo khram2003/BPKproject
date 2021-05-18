@@ -18,8 +18,10 @@ make server
 Если у вас Windows поменяйте в [CMakeLists.txt](CMakeLists.txt) пути до `QT_MINGW` и `MINGW`
 
 ## Используемые библиотеки и фреймворки
-[QT](https://www.qt.io/ "QT") \n
-[websocketpp](https://github.com/zaphoyd/websocketpp/ "websocketpp GitHub repository") \n
+[QT](https://www.qt.io/ "QT")
+
+[websocketpp](https://github.com/zaphoyd/websocketpp/ "websocketpp GitHub repository")
+
 [json.hpp](https://github.com/nlohmann/json "nlohmann/json GitHub repository")
 
 ## Авторы
