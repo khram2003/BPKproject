@@ -125,9 +125,10 @@ public:
         pqxx::work W(C);
         try {
             std::string query = "SELECT user_id, user_name FROM Users";
-            for (auto [id, name] : W.stream<std::size_t, std::string>(query)) {
+            for (auto[id, name] : W.stream<std::size_t, std::string>(query)) {
                 if (id == user_id) {
-                    return json{{"user_id", id}, {"user_name", name}}.dump(4);
+                    return json{{"user_id",   id},
+                                {"user_name", name}}.dump(4);
                 }
             }
             return "User not found";
@@ -144,12 +145,12 @@ public:
             std::string query =
                     "SELECT chat_id, sender_id, recipient_id, message_text FROM "
                     "Messages";
-            for (auto [id, sender_id, recipient_id, message_text] :
+            for (auto[id, sender_id, recipient_id, message_text] :
                     W.stream<std::size_t, std::size_t, std::size_t, std::string>(
                             query)) {
                 if (id == chat_id) {
-                    j.push_back(json{{"chat_id", chat_id},
-                                     {"sender_id", sender_id},
+                    j.push_back(json{{"chat_id",      chat_id},
+                                     {"sender_id",    sender_id},
                                      {"recipient_id", recipient_id},
                                      {"message_text", message_text}});
                 }
@@ -166,7 +167,7 @@ public:
         try {
             json j;
             std::string query = "SELECT user_id, chat_id FROM UserID_ChatID";
-            for (auto [id, chat_id] :
+            for (auto[id, chat_id] :
                     W.stream<std::size_t, std::size_t>(query)) {
                 if (id == user_id) {
                     j.push_back(json{{"chat_id", chat_id}});
@@ -186,7 +187,7 @@ using websocketpp::lib::placeholders::_1;
 using websocketpp::lib::placeholders::_2;
 typedef server::message_ptr message_ptr;
 
-// maybe not needed
+// todo maybe not needed
 void on_http(server *s, const websocketpp::connection_hdl &hdl) {
     server::connection_ptr con = s->get_con_from_hdl(hdl);
 
@@ -208,10 +209,21 @@ void on_fail(server *s, const websocketpp::connection_hdl &hdl) {
                   << ec.message() << std::endl;
     }
 }
+
 void on_close(server *s, const websocketpp::connection_hdl &hdl) {
     websocketpp::lib::error_code ec;
     s->close(hdl, 400, "Websocket closed", ec);
 }
+
+class conn_id {
+private:
+    std::size_t id = 1;
+
+public:
+    std::string give_id() {
+        return std::to_string(id++);
+    }
+} conn_id;
 
 void on_message(server *s,
                 Database *database,
@@ -225,6 +237,7 @@ void on_message(server *s,
         return;
     }
     std::string ECHO_CMD = "echo";
+    std::string GET_CONN = "get_conn";
     std::string FIND_USER_CMD = "find_user";
     std::string GET_CHAT_HISTORY = "get_chat_history";
     std::string GET_CHAT_LIST = "get_chat_list";
@@ -233,6 +246,8 @@ void on_message(server *s,
         if (msg->get_payload().substr(0, ECHO_CMD.size()) == "echo") {
             s->send(hdl, msg->get_payload().substr(ECHO_CMD.size() + 1),
                     msg->get_opcode());
+        } else if (msg->get_payload().substr(0, GET_CONN.size()) == "get_conn") {
+            s->send(hdl, conn_id.give_id(), msg->get_opcode());
         } else if (msg->get_payload().substr(0, FIND_USER_CMD.size()) ==
                    "find_user") {
             std::size_t user_id =
@@ -251,19 +266,18 @@ void on_message(server *s,
                     std::stoi(msg->get_payload().substr(GET_CHAT_LIST.size() + 1));
             std::string message = database->get_chat_list(user_id);
             s->send(hdl, message, msg->get_opcode());
-        } else {
-            s->send(hdl, "Unrecognized command", msg->get_opcode());
         }
     } catch (websocketpp::exception const &e) {
         std::cerr << "Send failed because: "
                   << "(" << e.what() << ")" << std::endl;
         throw;
     }
+
 }
 
 int main() {
     Database database(pqxx::connection(
-            "user=buyantuev-alexander"));  //пока подключение к localhost
+            "user=postgres password=12345"));  //пока подключение к localhost
 
     try {
         server server;

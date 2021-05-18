@@ -45,19 +45,26 @@ public:
 
 class websocket_endpoint {
 private:
+    using con_list = std::unordered_map<std::size_t, connection_metadata::ptr>;
+
     websocketpp::client<websocketpp::config::asio_client> m_endpoint;
     websocketpp::lib::shared_ptr<websocketpp::lib::thread> m_thread;
-    connection_metadata::ptr metadata_ptr;
-    std::size_t m_next_id;
+    con_list m_connection_list;
+
+    const std::string uri = "ws://localhost:9002";
 
 public:
     std::promise<std::string> p;
 
     websocket_endpoint();
 
-    std::size_t connect(std::string const &uri);
+    void init_factory();
+
+    std::size_t connect();
 
     void send(std::size_t id, const std::string &message);
+
+    connection_metadata::ptr get_metadata(std::size_t id) const;
 
     ~websocket_endpoint();
 };
