@@ -3,6 +3,7 @@
 #include <nlohmann/json.hpp>
 #include <pqxx/pqxx>
 #include <utility>
+#include <future>
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
 
@@ -215,7 +216,7 @@ void on_close(server *s, const websocketpp::connection_hdl &hdl) {
     s->close(hdl, 400, "Websocket closed", ec);
 }
 
-class conn_id {
+class connection_id {
 private:
     std::size_t id = 1;
 
@@ -223,10 +224,11 @@ public:
     std::string give_id() {
         return std::to_string(id++);
     }
-} conn_id;
+};
 
 void on_message(server *s,
                 Database *database,
+                connection_id *conn_id,
                 const websocketpp::connection_hdl &hdl,
                 const message_ptr &msg) {
     std::cout << "on_message called with hdl: " << hdl.lock().get()
@@ -247,7 +249,7 @@ void on_message(server *s,
             s->send(hdl, msg->get_payload().substr(ECHO_CMD.size() + 1),
                     msg->get_opcode());
         } else if (msg->get_payload().substr(0, GET_CONN.size()) == "get_conn") {
-            s->send(hdl, conn_id.give_id(), msg->get_opcode());
+            s->send(hdl, conn_id->give_id(), msg->get_opcode());
         } else if (msg->get_payload().substr(0, FIND_USER_CMD.size()) ==
                    "find_user") {
             std::size_t user_id =
@@ -272,7 +274,6 @@ void on_message(server *s,
                   << "(" << e.what() << ")" << std::endl;
         throw;
     }
-
 }
 
 int main() {
@@ -281,6 +282,7 @@ int main() {
 
     try {
         server server;
+        connection_id conn_id;
         server.set_access_channels(websocketpp::log::alevel::all);
         server.clear_access_channels(websocketpp::log::alevel::frame_payload);
         server.init_asio();
@@ -288,7 +290,7 @@ int main() {
         server.set_fail_handler(bind(&on_fail, &server, ::_1));
         server.set_close_handler(bind(&on_close, &server, ::_1));
         server.set_message_handler(
-                bind(&on_message, &server, &database, ::_1, ::_2));
+                bind(&on_message, &server, &database, &conn_id, ::_1, ::_2));
         server.listen(9002);
         std::cout << "Listening on 9002" << std::endl;
         server.start_accept();
