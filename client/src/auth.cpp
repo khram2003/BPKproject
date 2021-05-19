@@ -2,20 +2,30 @@
 #include "ui_auth.h"
 #include <user.h>
 #include <socket.h>
-//#include <QText
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 auth::auth(QWidget *parent) : QDialog(parent), ui(new Ui::auth) {
     ui->setupUi(this);
     connect(ui->AuthButton, &QPushButton::clicked, [this] {
         if ((ui->lineEdit->text()).size() != 0) {
-            std::size_t con_id = endpoint.connect();
-            user = User(ui->lineEdit->text().toStdString(), con_id);
+            user = User(ui->lineEdit->text().toStdString(), 0);
             endpoint.p = std::promise<std::string>();
-            endpoint.send(user.get_connection_id(),"echo authorized " + user.get_username());
+            endpoint.send("find_user " + user.get_username());
             auto future = endpoint.p.get_future();
             future.wait();
-            std::string s = future.get();
-            std::cout << s << std::endl;
+            std::string response = future.get();
+            if (response == "User not found") {
+                endpoint.send("add_user " + user.get_username());
+                endpoint.p = std::promise<std::string>();
+                endpoint.send("find_user " + user.get_username());
+                future = endpoint.p.get_future();
+                future.wait();
+                response = future.get();
+            }
+            auto j = json::parse(response);
+            user.add_user_id(j["user_id"]);
             ui->lineEdit->setText("");
             hide();
         }

@@ -1,6 +1,5 @@
 #include <socket.h>
 #include <websocketpp/client.hpp>
-#include <map>
 #include <websocketpp/common/memory.hpp>
 #include <websocketpp/common/thread.hpp>
 #include <websocketpp/config/asio_no_tls_client.hpp>
@@ -22,33 +21,33 @@ connection_metadata::connection_metadata(std::size_t id,
                                          websocketpp::connection_hdl hdl,
                                          std::string uri)
         : m_id(id),
-          m_hdl(hdl),
+          m_hdl(std::move(hdl)),
           m_status("Connecting"),
-          m_uri(uri),
+          m_uri(std::move(uri)),
           m_server("N/A") {
 }
 
 void connection_metadata::on_message(websocketpp::connection_hdl hdl,
-                                     websocketpp::config::asio_client::message_type::ptr msg) {
+                                     const websocketpp::config::asio_client::message_type::ptr &msg) {
     endpoint.p.set_value(msg->get_payload());
 }
 
 void connection_metadata::on_open(client *c, websocketpp::connection_hdl hdl) {
     m_status = "Open";
-    client::connection_ptr con = c->get_con_from_hdl(hdl);
+    client::connection_ptr con = c->get_con_from_hdl(std::move(hdl));
     m_server = con->get_response_header("Server");
 }
 
 void connection_metadata::on_fail(client *c, websocketpp::connection_hdl hdl) {
     m_status = "Failed";
-    client::connection_ptr con = c->get_con_from_hdl(hdl);
+    client::connection_ptr con = c->get_con_from_hdl(std::move(hdl));
     m_server = con->get_response_header("Server");
     m_error_reason = con->get_ec().message();
 }
 
 void connection_metadata::on_close(client *c, websocketpp::connection_hdl hdl) {
     m_status = "Closed";
-    client::connection_ptr con = c->get_con_from_hdl(hdl);
+    client::connection_ptr con = c->get_con_from_hdl(std::move(hdl));
 }
 
 websocketpp::connection_hdl connection_metadata::get_hdl() const {
@@ -70,127 +69,49 @@ websocket_endpoint::websocket_endpoint() {
     m_endpoint.init_asio();
     m_endpoint.start_perpetual();
 
-    init_factory();
+    init_connection();
 
     m_thread = websocketpp::lib::make_shared<websocketpp::lib::thread>(
             &client::run, &m_endpoint);
 }
 
-void websocket_endpoint::init_factory() {
+void websocket_endpoint::init_connection() {
     websocketpp::lib::error_code ec;
     client::connection_ptr con = m_endpoint.get_connection(uri, ec);
     connection_metadata::ptr metadata_ptr(new connection_metadata(0, con->get_handle(), uri));
-    m_connection_list[0] = metadata_ptr;
-    con->set_open_handler(websocketpp::lib::bind(
-            &connection_metadata::on_open,
-            metadata_ptr,
-            &m_endpoint,
-            websocketpp::lib::placeholders::_1
-    ));
-    con->set_fail_handler(websocketpp::lib::bind(
-            &connection_metadata::on_fail,
-            metadata_ptr,
-            &m_endpoint,
-            websocketpp::lib::placeholders::_1
-    ));
-    con->set_close_handler(websocketpp::lib::bind(
-            &connection_metadata::on_close,
-            metadata_ptr,
-            &m_endpoint,
-            websocketpp::lib::placeholders::_1
-    ));
-    con->set_message_handler(websocketpp::lib::bind(&connection_metadata::on_message, metadata_ptr,
-                                                    websocketpp::lib::placeholders::_1,
-                                                    websocketpp::lib::placeholders::_2));
-    //todo Вот здесь все норм подключается
+    m_connection = metadata_ptr;
+    con->set_open_handler([metadata_ptr, capture0 = &m_endpoint](auto &&PH1) {
+        metadata_ptr->on_open(capture0, std::forward<decltype(PH1)>(PH1));
+    });
+    con->set_fail_handler([metadata_ptr, capture0 = &m_endpoint](auto &&PH1) {
+        metadata_ptr->on_fail(capture0, std::forward<decltype(PH1)>(PH1));
+    });
+    con->set_close_handler([metadata_ptr, capture0 = &m_endpoint](auto &&PH1) {
+        metadata_ptr->on_close(capture0, std::forward<decltype(PH1)>(PH1));
+    });
+    con->set_message_handler([metadata_ptr](auto &&PH1, auto &&PH2) {
+        metadata_ptr->on_message(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2));
+    });
     m_endpoint.connect(con);
 }
 
-std::size_t websocket_endpoint::connect() {
+void websocket_endpoint::send(const std::string &message) {
     websocketpp::lib::error_code ec;
-
-    client::connection_ptr con = m_endpoint.get_connection(uri, ec);
-
-    if (ec) {
-        std::cerr << "> Connect initialization error: " << ec.message()
-                  << std::endl;
-        return 0;
-    }
-
-    p = std::promise<std::string>();
-    send(0, "get_conn");
-    auto future = endpoint.p.get_future();
-    future.wait();
-    std::size_t new_id = std::stoull(future.get());
-    connection_metadata::ptr metadata_ptr(new connection_metadata(new_id, con->get_handle(), uri));
-    m_connection_list[new_id] = metadata_ptr;
-    con->set_open_handler(websocketpp::lib::bind(
-            &connection_metadata::on_open,
-            metadata_ptr,
-            &m_endpoint,
-            websocketpp::lib::placeholders::_1
-    ));
-    con->set_fail_handler(websocketpp::lib::bind(
-            &connection_metadata::on_fail,
-            metadata_ptr,
-            &m_endpoint,
-            websocketpp::lib::placeholders::_1
-    ));
-    con->set_close_handler(websocketpp::lib::bind(
-            &connection_metadata::on_close,
-            metadata_ptr,
-            &m_endpoint,
-            websocketpp::lib::placeholders::_1
-    ));
-    con->set_message_handler(websocketpp::lib::bind(&connection_metadata::on_message, metadata_ptr,
-                                                    websocketpp::lib::placeholders::_1,
-                                                    websocketpp::lib::placeholders::_2));
-
-    //todo Вот здесь статус остается Connecting, а должен стать Open
-    m_endpoint.connect(con);
-
-    return new_id;
-}
-
-void websocket_endpoint::send(std::size_t id, const std::string &message) {
-    websocketpp::lib::error_code ec;
-
-    auto metadata_it = m_connection_list.find(id);
-    if (metadata_it == m_connection_list.end()) {
-        return;
-    }
-
-    m_endpoint.send(metadata_it->second->get_hdl(), message,
+    m_endpoint.send(m_connection->get_hdl(), message,
                     websocketpp::frame::opcode::text, ec);
     if (ec) {
         return;
     }
 }
 
-connection_metadata::ptr websocket_endpoint::get_metadata(std::size_t id) const {
-    auto metadata_it = m_connection_list.find(id);
-    if (metadata_it == m_connection_list.end()) {
-        return connection_metadata::ptr();
-    } else {
-        return metadata_it->second;
-    }
-}
-
 websocket_endpoint::~websocket_endpoint() {
     m_endpoint.stop_perpetual();
 
-    for (auto &it : m_connection_list) {
-        if (it.second->get_status() != "Open") {
-            continue;
-        }
-        websocketpp::lib::error_code ec;
-        if (it.first != 0) {
-            m_endpoint.close(it.second->get_hdl(),
-                             websocketpp::close::status::going_away, "", ec);
-        }
-        if (ec) {
-            return;
-        }
+    websocketpp::lib::error_code ec;
+    m_endpoint.close(m_connection->get_hdl(),
+                     websocketpp::close::status::going_away, "", ec);
+    if (ec) {
+        return;
     }
 
     m_thread->join();

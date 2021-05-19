@@ -1,10 +1,8 @@
 #include <user.h>
 
-#include <utility>
-
 User user;
 
-User::User(std::string name, std::size_t con_id) : username(std::move(name)), connection_id(con_id) {
+User::User(const std::string &name, const std::size_t con_id) : username(name), connection_id(con_id) {
 
 }
 
@@ -14,4 +12,12 @@ std::string User::get_username() const {
 
 std::size_t User::get_connection_id() const {
     return connection_id;
+}
+
+std::size_t User::get_user_id() const {
+    return user_id;
+}
+
+void User::add_user_id(const std::size_t id) {
+    user_id = id;
 }

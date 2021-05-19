@@ -122,14 +122,14 @@ public:
         }
     }
 
-    std::string find_user(std::size_t user_id) {
+    std::string find_user(const std::string &user_name) {
         pqxx::work W(C);
         try {
             std::string query = "SELECT user_id, user_name FROM Users";
             for (auto[id, name] : W.stream<std::size_t, std::string>(query)) {
-                if (id == user_id) {
+                if (name == user_name) {
                     return json{{"user_id",   id},
-                                {"user_name", name}}.dump(4);
+                                {"user_name", name}}.dump();
                 }
             }
             return "User not found";
@@ -156,7 +156,24 @@ public:
                                      {"message_text", message_text}});
                 }
             }
-            return j.dump(4);
+            return j.dump();
+        } catch (const std::exception &e) {
+            std::cerr << e.what() << std::endl;
+            throw;
+        }
+    }
+
+    std::string get_chat_name(std::size_t chat_id) {
+        pqxx::work W(C);
+        try {
+            json j;
+            std::string query = "SELECT chat_id, chat_name FROM Chats";
+            for (auto[id, chat_name] :
+                    W.stream<std::size_t, std::string>(query)) {
+                if (id == chat_id) {
+                    return json{{"chat_id", chat_id}, {"chat_name", chat_name}};
+                }
+            }
         } catch (const std::exception &e) {
             std::cerr << e.what() << std::endl;
             throw;
@@ -174,7 +191,7 @@ public:
                     j.push_back(json{{"chat_id", chat_id}});
                 }
             }
-            return j.dump(4);
+            return j.dump();
         } catch (const std::exception &e) {
             std::cerr << e.what() << std::endl;
             throw;
@@ -240,7 +257,8 @@ void on_message(server *s,
     }
     std::string ECHO_CMD = "echo";
     std::string GET_CONN = "get_conn";
-    std::string FIND_USER_CMD = "find_user";
+    std::string FIND_USER = "find_user";
+    std::string ADD_USER = "add_user";
     std::string GET_CHAT_HISTORY = "get_chat_history";
     std::string GET_CHAT_LIST = "get_chat_list";
 
@@ -250,13 +268,15 @@ void on_message(server *s,
                     msg->get_opcode());
         } else if (msg->get_payload().substr(0, GET_CONN.size()) == "get_conn") {
             s->send(hdl, conn_id->give_id(), msg->get_opcode());
-        } else if (msg->get_payload().substr(0, FIND_USER_CMD.size()) ==
+        } else if (msg->get_payload().substr(0, FIND_USER.size()) ==
                    "find_user") {
-            std::size_t user_id =
-                    std::stoi(msg->get_payload().substr(FIND_USER_CMD.size() + 1));
-            std::string message = database->find_user(user_id);
+            std::string user_name = msg->get_payload().substr(FIND_USER.size() + 1);
+            std::string message = database->find_user(user_name);
             s->send(hdl, message, msg->get_opcode());
-        } else if (msg->get_payload().substr(0, GET_CHAT_HISTORY.size()) ==
+        } else if (msg->get_payload().substr(0, ADD_USER.size()) == "add_user") {
+            std::string user_name = msg->get_payload().substr(ADD_USER.size() + 1);
+            database->add_user(user_name);
+        }else if (msg->get_payload().substr(0, GET_CHAT_HISTORY.size()) ==
                    "get_chat_history") {
             std::size_t chat_id = std::stoi(
                     msg->get_payload().substr(GET_CHAT_HISTORY.size() + 1));

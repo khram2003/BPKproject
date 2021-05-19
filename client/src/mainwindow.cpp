@@ -13,31 +13,42 @@
 #include "ui_mainwindow.h"
 #include <unordered_map>
 #include <socket.h>
+#include <nlohmann/json.hpp>
+#include <user.h>
+
+using json = nlohmann::json;
 
 MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
+    json chat_id, chat_names;
 
+    //TODO FIX THIS PART
 
-    std::string chat_list;
-    std::size_t TEST_ID=1;
-//    chat_list=database.get_chat_list(TEST_ID);
-//    std::cout<<chat_list;
-
-    //TODO:теперь нужно распарсить id и получить имя чата (вопрос Сане).
-    std::vector<std::pair<QString, std::size_t>> chat_names_id = {
-            {"Biba", 1}, {"Boba", 2}, {"Bobo", 3}};  // just for example, should be downloaded
-
-    for (auto x : chat_names_id) {
+    if (user.get_user_id() != 0) {
+        endpoint.p = std::promise<std::string>();
+        endpoint.send("get_chat_list " + std::to_string(user.get_user_id()));
+        auto future = endpoint.p.get_future();
+        future.wait();
+        std::string response = future.get();
+        chat_id = json::parse(response);
+    }
+    for (auto x : chat_id) {
+//        endpoint.p = std::promise<std::string>();
+//        endpoint.send("get_chat_name " + x["chat_id"]);
+//        chat_names.push_back(json::parse(response));
+        std::cout << x << std::endl;
+    }
+    for (auto x : chat_names) {
         QListWidgetItem *item = new QListWidgetItem;
-        ChatView *row = new ChatView(x.first);
+        ChatView *row = new ChatView(/*x.first*/"hello");
         ui->listWidget_2->setWordWrap(true);
         ui->listWidget_2->addItem(item);
         ui->listWidget_2->setItemWidget(item, row);
         item->setSizeHint(row->minimumSizeHint());
         item->setFont(QFont("Helvetica [Cronyx]", 12));
         item->setSizeHint(QSize(2, 52));
-        itemptr_to_chatid[item]=x.second;
+        itemptr_to_chatid[item] = /*x.second*/ 1;
     }
 
     connect(ui->sendButton, &QPushButton::clicked, [this] {
@@ -54,19 +65,18 @@ MainWindow::MainWindow(QWidget *parent)
             item->setSizeHint(row->sizeHint());
             item->setFont(QFont("Helvetica [Cronyx]", 12));
             endpoint.p = std::promise<std::string>();
-            endpoint.send(1, "echo new message");
+            endpoint.send("echo " + ui->textEdit->toPlainText().toStdString());
             auto future = endpoint.p.get_future();
             future.wait();
             std::string s = future.get();
             std::cout << s << std::endl;
             ui->textEdit->setPlainText("");
-//            database.add_message();
         }
     });
 
-    connect(ui->listWidget_2, SIGNAL(itemClicked(QListWidgetItem *)),
+    connect(ui->listWidget_2, SIGNAL(itemClicked(QListWidgetItem * )),
             ui->listWidget,
-            SLOT(on_listWidget_2_itemClicked(QListWidgetItem *)));
+            SLOT(on_listWidget_2_itemClicked(QListWidgetItem * )));
 }
 
 MainWindow::~MainWindow() {
