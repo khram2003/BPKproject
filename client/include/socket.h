@@ -2,7 +2,7 @@
 #define SOCKET_H
 
 #include <websocketpp/client.hpp>
-#include <unordered_map>
+#include <map>
 #include <websocketpp/common/memory.hpp>
 #include <websocketpp/common/thread.hpp>
 #include <websocketpp/config/asio_no_tls_client.hpp>
@@ -45,7 +45,7 @@ public:
 
 class websocket_endpoint {
 private:
-    using con_list = std::unordered_map<std::size_t, connection_metadata::ptr>;
+    using con_list = std::map<std::size_t, connection_metadata::ptr>;
 
     websocketpp::client<websocketpp::config::asio_client> m_endpoint;
     websocketpp::lib::shared_ptr<websocketpp::lib::thread> m_thread;

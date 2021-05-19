@@ -1,6 +1,6 @@
 #include <socket.h>
 #include <websocketpp/client.hpp>
-#include <unordered_map>
+#include <map>
 #include <websocketpp/common/memory.hpp>
 #include <websocketpp/common/thread.hpp>
 #include <websocketpp/config/asio_no_tls_client.hpp>
@@ -102,7 +102,7 @@ void websocket_endpoint::init_factory() {
     con->set_message_handler(websocketpp::lib::bind(&connection_metadata::on_message, metadata_ptr,
                                                     websocketpp::lib::placeholders::_1,
                                                     websocketpp::lib::placeholders::_2));
-
+    //todo Вот здесь все норм подключается
     m_endpoint.connect(con);
 }
 
@@ -146,6 +146,7 @@ std::size_t websocket_endpoint::connect() {
                                                     websocketpp::lib::placeholders::_1,
                                                     websocketpp::lib::placeholders::_2));
 
+    //todo Вот здесь статус остается Connecting, а должен стать Open
     m_endpoint.connect(con);
 
     return new_id;
