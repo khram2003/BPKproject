@@ -19,7 +19,7 @@
 using json = nlohmann::json;
 
 MainWindow::MainWindow(QWidget *parent)
-        : QMainWindow(parent), ui(new Ui::MainWindow) {
+        : QWidget(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
     json chat_id, chat_names;
 
@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
         item->setSizeHint(row->minimumSizeHint());
         item->setFont(QFont("Helvetica [Cronyx]", 12));
         item->setSizeHint(QSize(2, 52));
-        itemptr_to_chatid[item] = /*x.second*/ 1;
+        //itemptr_to_chatid[item] = /*x.second*/ 1;
     }
 
     connect(ui->sendButton, &QPushButton::clicked, [this] {

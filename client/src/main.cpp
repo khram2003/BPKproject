@@ -28,8 +28,6 @@ int main(int argc, char *argv[]) {
         QApplication::setPalette(darkPalette);
         auth au;
         au.show();
-        MainWindow w;
-        w.show();
         return QApplication::exec();
     } catch (...) {
         return 1;

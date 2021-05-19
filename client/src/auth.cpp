@@ -6,9 +6,12 @@
 
 using json = nlohmann::json;
 
-auth::auth(QWidget *parent) : QDialog(parent), ui(new Ui::auth) {
+auth::auth(QWidget *parent) : QMainWindow(parent), ui(new Ui::auth) {
     ui->setupUi(this);
-    connect(ui->AuthButton, &QPushButton::clicked, [this] {
+
+    messWindow = new MainWindow();
+
+    connect(messWindow, &MainWindow::messWin, [this] {
         if ((ui->lineEdit->text()).size() != 0) {
             user = User(ui->lineEdit->text().toStdString(), 0);
             endpoint.p = std::promise<std::string>();
@@ -30,6 +33,13 @@ auth::auth(QWidget *parent) : QDialog(parent), ui(new Ui::auth) {
             hide();
         }
     });
+}
+
+void auth::on_AuthButton_clicked(){
+    if ((ui->lineEdit->text()).size() != 0) {
+        messWindow->show();
+        this->close();
+    }
 }
 
 auth::~auth() {

@@ -2,28 +2,29 @@
 #define MAINWINDOW_H
 
 #include <QListWidgetItem>
-#include <QMainWindow>
+#include <QWidget>
 #include <QStringListModel>
 
-QT_BEGIN_NAMESPACE
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
-QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow {
-    Q_OBJECT
+class MainWindow : public QWidget {
+Q_OBJECT
 
 public:
-    std::unordered_map<QListWidgetItem*, std::size_t> itemptr_to_chatid;
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 
 private slots:
     void on_listWidget_2_itemClicked(QListWidgetItem *item);
 
+signals:
+    void messWin();
+
 private:
     Ui::MainWindow *ui;
 };
 
 #endif  // MAINWINDOW_H
+

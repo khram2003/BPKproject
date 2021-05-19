@@ -106,13 +106,11 @@ void websocket_endpoint::send(const std::string &message) {
 
 websocket_endpoint::~websocket_endpoint() {
     m_endpoint.stop_perpetual();
-
     websocketpp::lib::error_code ec;
     m_endpoint.close(m_connection->get_hdl(),
                      websocketpp::close::status::going_away, "", ec);
     if (ec) {
         return;
     }
-
     m_thread->join();
 }
