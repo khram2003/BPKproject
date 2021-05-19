@@ -2,6 +2,7 @@
 #include <QStyleFactory>
 #include "mainwindow.h"
 #include "auth.h"
+#include <user.h>
 
 int main(int argc, char *argv[]) {
     try {
@@ -25,10 +26,10 @@ int main(int argc, char *argv[]) {
         darkPalette.setColor(QPalette::HighlightedText, Qt::black);
 
         QApplication::setPalette(darkPalette);
-        MainWindow w;
         auth au;
-        w.show();
         au.show();
+        MainWindow w;
+        w.show();
         return QApplication::exec();
     } catch (...) {
         return 1;

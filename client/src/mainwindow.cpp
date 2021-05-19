@@ -64,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
             ui->listWidget->setItemWidget(item, row);
             item->setSizeHint(row->sizeHint());
             item->setFont(QFont("Helvetica [Cronyx]", 12));
+            //TODO .send(add_message)
             endpoint.p = std::promise<std::string>();
             endpoint.send("echo " + ui->textEdit->toPlainText().toStdString());
             auto future = endpoint.p.get_future();

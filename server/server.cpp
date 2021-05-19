@@ -233,19 +233,8 @@ void on_close(server *s, const websocketpp::connection_hdl &hdl) {
     s->close(hdl, 400, "Websocket closed", ec);
 }
 
-class connection_id {
-private:
-    std::size_t id = 1;
-
-public:
-    std::string give_id() {
-        return std::to_string(id++);
-    }
-};
-
 void on_message(server *s,
                 Database *database,
-                connection_id *conn_id,
                 const websocketpp::connection_hdl &hdl,
                 const message_ptr &msg) {
     std::cout << "on_message called with hdl: " << hdl.lock().get()
@@ -256,9 +245,12 @@ void on_message(server *s,
         return;
     }
     std::string ECHO_CMD = "echo";
-    std::string GET_CONN = "get_conn";
     std::string FIND_USER = "find_user";
     std::string ADD_USER = "add_user";
+    std::string ADD_CHAT = "add_chat";
+    std::string ADD_MESSAGE = "add_message";
+    std::string LINK_USER_TO_CHAT = "link_user_to_chat";
+    std::string GET_CHAT_NAME = "get_chat_name";
     std::string GET_CHAT_HISTORY = "get_chat_history";
     std::string GET_CHAT_LIST = "get_chat_list";
 
@@ -266,8 +258,6 @@ void on_message(server *s,
         if (msg->get_payload().substr(0, ECHO_CMD.size()) == "echo") {
             s->send(hdl, msg->get_payload().substr(ECHO_CMD.size() + 1),
                     msg->get_opcode());
-        } else if (msg->get_payload().substr(0, GET_CONN.size()) == "get_conn") {
-            s->send(hdl, conn_id->give_id(), msg->get_opcode());
         } else if (msg->get_payload().substr(0, FIND_USER.size()) ==
                    "find_user") {
             std::string user_name = msg->get_payload().substr(FIND_USER.size() + 1);
@@ -276,7 +266,16 @@ void on_message(server *s,
         } else if (msg->get_payload().substr(0, ADD_USER.size()) == "add_user") {
             std::string user_name = msg->get_payload().substr(ADD_USER.size() + 1);
             database->add_user(user_name);
-        }else if (msg->get_payload().substr(0, GET_CHAT_HISTORY.size()) ==
+        } else if (msg->get_payload().substr(0, ADD_CHAT.size()) == "add_chat") {
+            std::string chat_name = msg->get_payload().substr(ADD_CHAT.size() + 1);
+            database->add_chat(chat_name);
+        } else if (msg->get_payload().substr(0, ADD_MESSAGE.size()) == "add_message") {
+            std::stringstream ss(msg->get_payload().substr(ADD_MESSAGE.size() + 1));
+            std::size_t chat_id, sender_id, recipient_id;
+            ss >> chat_id >> sender_id >> recipient_id;
+            std::string message = ss.str();
+            database->add_message(chat_id, sender_id, recipient_id, message);
+        } else if (msg->get_payload().substr(0, GET_CHAT_HISTORY.size()) ==
                    "get_chat_history") {
             std::size_t chat_id = std::stoi(
                     msg->get_payload().substr(GET_CHAT_HISTORY.size() + 1));
@@ -302,7 +301,6 @@ int main() {
 
     try {
         server server;
-        connection_id conn_id;
         server.set_access_channels(websocketpp::log::alevel::all);
         server.clear_access_channels(websocketpp::log::alevel::frame_payload);
         server.init_asio();
@@ -310,7 +308,7 @@ int main() {
         server.set_fail_handler(bind(&on_fail, &server, ::_1));
         server.set_close_handler(bind(&on_close, &server, ::_1));
         server.set_message_handler(
-                bind(&on_message, &server, &database, &conn_id, ::_1, ::_2));
+                bind(&on_message, &server, &database, ::_1, ::_2));
         server.listen(9002);
         std::cout << "Listening on 9002" << std::endl;
         server.start_accept();
