@@ -8,9 +8,13 @@ option(BUILD_CLIENT "Build client" ON)
 
 find_package(PostgreSQL)
 
-include_directories(third-party/date third-party/libpqxx-7.3.1/include third-party/websocketpp-0.8.2 third-party/json-3.9.1/include)
-add_subdirectory(third-party/libpqxx-7.3.1)
-add_subdirectory(third-party/websocketpp-0.8.2)
+set(LIBPQXX_VERSION "libpqxx-7.5.2")
+set(WEBSOCKETPP_VERSION "websocketpp-0.8.2")
+set(JSON_VERSION "json-3.9.1")
+
+include_directories(third-party/date third-party/${LIBPQXX_VERSION}/include third-party/${WEBSOCKETPP_VERSION} third-party/${JSON_VERSION}/include)
+add_subdirectory(third-party/${LIBPQXX_VERSION})
+add_subdirectory(third-party/${WEBSOCKETPP_VERSION})
 add_subdirectory(model)
 include_directories(model)
 if (BUILD_CLIENT)

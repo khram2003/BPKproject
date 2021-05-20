@@ -41,9 +41,9 @@ set_target_properties(
 )
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
-set(QT_MINGW "C:/Qt/6.0.1/mingw81_64")
-
 if(WIN32)
+    set(QT_MINGW "C:/Qt/6.0.1/mingw81_64")
+    set(MINGW "C:/msys64/mingw64")
     if($<CONFIG:Debug>)
         get_target_property(WIDGETDLL Qt6::Widgets IMPORTED_LOCATION_DEBUG)
         get_target_property(COREDLL Qt6::Core IMPORTED_LOCATION_DEBUG)
@@ -59,9 +59,9 @@ if(WIN32)
             $<TARGET_FILE:Qt6::Widgets>
             $<TARGET_FILE:Qt6::Core>
             $<TARGET_FILE:Qt6::Gui>
-            ${QT_MINGW}/bin/libgcc_s_seh-1.dll
-            ${QT_MINGW}/bin/libstdc++-6.dll
-            ${QT_MINGW}/bin/libwinpthread-1.dll
+            ${MINGW}/bin/libgcc_s_seh-1.dll
+            ${MINGW}/bin/libstdc++-6.dll
+            ${MINGW}/bin/libwinpthread-1.dll
             $<TARGET_FILE_DIR:${PROJECT_NAME}>
     )
 
