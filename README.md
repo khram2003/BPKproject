@@ -28,4 +28,3 @@ make server
 Contributors: [@alexbuyan](https://github.com/alexbuyan "Alexander Buyantuev"), [@parseny](https://github.com/parseny "Arsenii Pimenov"), [@khram](https://github.com/khram "Nikita Khramov")
 
 Mentor: [@vasalf](https://github.com/vasalf "Vasily Alferov")
-
