@@ -16,7 +16,6 @@ include_directories(third-party/date third-party/${LIBPQXX_VERSION}/include thir
 add_subdirectory(third-party/${LIBPQXX_VERSION})
 add_subdirectory(third-party/${WEBSOCKETPP_VERSION})
 add_subdirectory(model)
-add_subdirectory(third-party/libpqxx-7.3.1)
 include_directories(model)
 if (BUILD_CLIENT)
   add_subdirectory(client)

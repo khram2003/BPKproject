@@ -6,7 +6,6 @@ project(BPK VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-lpthread")
 
 find_package(Qt6Core REQUIRED)
 find_package(Qt6Widgets REQUIRED)
@@ -49,33 +48,7 @@ add_executable(${PROJECT_NAME} ${UI} ${SOURCES})
 set_target_properties(
         ${PROJECT_NAME}
         PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
+        RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}
 )
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_link_libraries(${PROJECT_NAME} ${Qt6Widgets_LIBRARIES} Qt6::Core Qt6::Widgets Qt6::Gui ${NETWORKING_LIBS} ${Boost_LIBRARIES})
-
-if(WIN32)
-    set(QT_MINGW "C:/Qt/6.1.0/mingw81_64")
-    set(MINGW "C:/msys64/mingw64")
-    if($<CONFIG:Debug>)
-        get_target_property(WIDGETDLL Qt6::Widgets IMPORTED_LOCATION_DEBUG)
-        get_target_property(COREDLL Qt6::Core IMPORTED_LOCATION_DEBUG)
-        get_target_property(GUIDLL Qt6::Gui IMPORTED_LOCATION_DEBUG)
-    else($<CONFIG:Debug>)
-        get_target_property(WIDGETDLL Qt6::Widgets IMPORTED_LOCATION_RELEASE)
-        get_target_property(COREDLL Qt6::Core IMPORTED_LOCATION_RELEASE)
-        get_target_property(GUIDLL Qt6::Gui IMPORTED_LOCATION_RELEASE)
-    endif($<CONFIG:Debug>)
-    add_custom_command(
-            TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:Qt6::Widgets>
-            $<TARGET_FILE:Qt6::Core>
-            $<TARGET_FILE:Qt6::Gui>
-            ${MINGW}/bin/libgcc_s_seh-1.dll
-            ${MINGW}/bin/libstdc++-6.dll
-            ${MINGW}/bin/libwinpthread-1.dll
-            ${MINGW}/bin/libboost_thread-mt.dll
-            $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    )
-endif(WIN32)
