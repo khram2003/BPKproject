@@ -1,8 +1,8 @@
+#include <user.h>
 #include <QApplication>
 #include <QStyleFactory>
-#include "mainwindow.h"
 #include "auth.h"
-#include <user.h>
+#include "mainwindow.h"
 
 int main(int argc, char *argv[]) {
     try {
@@ -26,8 +26,8 @@ int main(int argc, char *argv[]) {
         darkPalette.setColor(QPalette::HighlightedText, Qt::black);
 
         QApplication::setPalette(darkPalette);
-        auth au;
-        au.show();
+        auth w;
+        w.show();
         return QApplication::exec();
     } catch (...) {
         return 1;

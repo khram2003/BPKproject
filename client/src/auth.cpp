@@ -1,8 +1,9 @@
 #include "auth.h"
-#include "ui_auth.h"
-#include <user.h>
 #include <socket.h>
+#include <user.h>
 #include <nlohmann/json.hpp>
+#include "mainwindow.h"
+#include "ui_auth.h"
 
 using json = nlohmann::json;
 
@@ -33,9 +34,11 @@ auth::auth(QWidget *parent) : QMainWindow(parent), ui(new Ui::auth) {
             hide();
         }
     });
+    connect(messWindow, &MainWindow::authWin, this, &auth::show);
+    this->setFixedSize(400, 400);
 }
 
-void auth::on_AuthButton_clicked(){
+void auth::on_AuthButton_clicked() {
     if ((ui->lineEdit->text()).size() != 0) {
         messWindow->show();
         this->close();

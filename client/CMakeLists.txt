@@ -51,4 +51,5 @@ set_target_properties(
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}
 )
 target_include_directories(${PROJECT_NAME} PUBLIC include)
-target_link_libraries(${PROJECT_NAME} ${Qt6Widgets_LIBRARIES} Qt6::Core Qt6::Widgets Qt6::Gui ${NETWORKING_LIBS} ${Boost_LIBRARIES})
+#PUBLIC linkage due to Qt bug: https://bugreports.qt.io/browse/QTBUG-93671
+target_link_libraries(${PROJECT_NAME} PUBLIC ${Qt6Widgets_LIBRARIES} Qt6::Core Qt6::Widgets Qt6::Gui ${NETWORKING_LIBS} ${Boost_LIBRARIES})
