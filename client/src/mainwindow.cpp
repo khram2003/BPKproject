@@ -92,11 +92,11 @@ MainWindow::MainWindow(QWidget *parent)
 
         this->setFixedSize(1000, 600);
     }
+}
+MainWindow::~MainWindow() {
+    delete ui;
+}
 
-    MainWindow::~MainWindow() {
-        delete ui;
-    }
-
-    void MainWindow::on_listWidget_2_itemClicked(QListWidgetItem * item) {
-        ui->listWidget->clear();
-    }
+void MainWindow::on_listWidget_2_itemClicked(QListWidgetItem *item) {
+    ui->listWidget->clear();
+}
