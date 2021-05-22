@@ -16,6 +16,9 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 
+signals:
+    void authWin();
+
 private slots:
     void on_listWidget_2_itemClicked(QListWidgetItem *item);
 
