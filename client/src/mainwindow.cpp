@@ -71,13 +71,12 @@ MainWindow::MainWindow(QWidget *parent)
             item->setSizeHint(row->sizeHint());
             item->setFont(QFont("Helvetica [Cronyx]", 12));
             // TODO .send(add_message)
-            //                endpoint.p = std::promise<std::string>();
-            //                endpoint.send("echo " +
-            //                              ui->textEdit->toPlainText().toStdString());
-            //                auto future = endpoint.p.get_future();
-            //                future.wait();
-            //                std::string s = future.get();
-            //                std::cout << s << std::endl;
+            endpoint.p = std::promise<std::string>();
+            endpoint.send("echo " + ui->textEdit->toPlainText().toStdString());
+            auto future = endpoint.p.get_future();
+            future.wait();
+            std::string s = future.get();
+            std::cout << s << std::endl;
             ui->textEdit->setPlainText("");
         }
     });
