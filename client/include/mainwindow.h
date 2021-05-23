@@ -2,15 +2,15 @@
 #define MAINWINDOW_H
 
 #include <QListWidgetItem>
-#include <QWidget>
+#include <QMainWindow>
 #include <QStringListModel>
 
 namespace Ui {
-    class MainWindow;
+class MainWindow;
 }
 
-class MainWindow : public QWidget {
-Q_OBJECT
+class MainWindow : public QMainWindow {
+    Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -30,4 +30,3 @@ private:
 };
 
 #endif  // MAINWINDOW_H
-
