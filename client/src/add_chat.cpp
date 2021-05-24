@@ -1,19 +1,19 @@
 #include <add_chat.h>
+#include <chat_view.h>
+#include <mainwindow.h>
 #include <socket.h>
+#include <ui_add_chat.h>
 #include <user.h>
 #include <QMainWindow>
 #include <QPushButton>
 #include <QWidget>
 #include <nlohmann/json.hpp>
 #include <string>
-#include <chat_view.h>
-#include <mainwindow.h>
-#include <ui_add_chat.h>
 
 using json = nlohmann::json;
 
 add_chat::add_chat(QWidget *parent, MainWindow *messWin)
-        : QMainWindow(parent), ui(new Ui::add_chat), mess(messWin) {
+    : QMainWindow(parent), ui(new Ui::add_chat), mess(messWin) {
     ui->setupUi(this);
 
     connect(ui->AddButton, &QPushButton::clicked, [this] {
@@ -25,7 +25,9 @@ add_chat::add_chat(QWidget *parent, MainWindow *messWin)
         future.wait();
         std::string response = future.get();
         json j = json::parse(response);
-        endpoint.send("link_user_to_chat " + std::to_string(user.get_user_id()) + " " + j["chat_id"].dump());
+        endpoint.send("link_user_to_chat " +
+                      std::to_string(user.get_user_id()) + " " +
+                      j["chat_id"].dump());
         mess->get_ui()->listWidget_2->clear();
         mess->update_chats();
         hide();

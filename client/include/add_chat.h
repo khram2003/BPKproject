@@ -1,16 +1,16 @@
 #ifndef ADD_CHAT_H
 #define ADD_CHAT_H
 
-#include <QMainWindow>
 #include <mainwindow.h>
 #include <ui_mainwindow.h>
+#include <QMainWindow>
 
 namespace Ui {
-    class add_chat;
+class add_chat;
 }
 
 class add_chat : public QMainWindow {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     explicit add_chat(QWidget *parent = nullptr, MainWindow *messWin = nullptr);
@@ -22,4 +22,4 @@ private:
     MainWindow *mess;
 };
 
-#endif //ADD_CHAT_H
+#endif  // ADD_CHAT_H

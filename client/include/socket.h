@@ -1,12 +1,12 @@
 #ifndef SOCKET_H
 #define SOCKET_H
 
-#include <websocketpp/client.hpp>
+#include <future>
 #include <map>
+#include <websocketpp/client.hpp>
 #include <websocketpp/common/memory.hpp>
 #include <websocketpp/common/thread.hpp>
 #include <websocketpp/config/asio_no_tls_client.hpp>
-#include <future>
 
 class connection_metadata {
 private:
@@ -20,14 +20,18 @@ private:
 public:
     using ptr = websocketpp::lib::shared_ptr<connection_metadata>;
 
-    void on_message(websocketpp::connection_hdl hdl,
-                    const websocketpp::config::asio_client::message_type::ptr &msg);
+    void on_message(
+        websocketpp::connection_hdl hdl,
+        const websocketpp::config::asio_client::message_type::ptr &msg);
 
-    void on_open(websocketpp::client<websocketpp::config::asio_client> *c, websocketpp::connection_hdl hdl);
+    void on_open(websocketpp::client<websocketpp::config::asio_client> *c,
+                 websocketpp::connection_hdl hdl);
 
-    void on_fail(websocketpp::client<websocketpp::config::asio_client> *c, websocketpp::connection_hdl hdl);
+    void on_fail(websocketpp::client<websocketpp::config::asio_client> *c,
+                 websocketpp::connection_hdl hdl);
 
-    void on_close(websocketpp::client<websocketpp::config::asio_client> *c, websocketpp::connection_hdl hdl);
+    void on_close(websocketpp::client<websocketpp::config::asio_client> *c,
+                  websocketpp::connection_hdl hdl);
 
     [[nodiscard]] websocketpp::connection_hdl get_hdl() const;
 
@@ -63,4 +67,4 @@ public:
 
 extern websocket_endpoint endpoint;
 
-#endif //SOCKET_H
+#endif  // SOCKET_H

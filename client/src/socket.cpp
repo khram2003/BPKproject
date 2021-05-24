@@ -1,10 +1,10 @@
 #include <socket.h>
+#include <utility>
 #include <websocketpp/client.hpp>
 #include <websocketpp/common/memory.hpp>
 #include <websocketpp/common/thread.hpp>
 #include <websocketpp/config/asio_no_tls_client.hpp>
 #include <websocketpp/roles/client_endpoint.hpp>
-#include <utility>
 
 websocket_endpoint endpoint;
 
@@ -20,15 +20,16 @@ using client = websocketpp::client<websocketpp::config::asio_client>;
 connection_metadata::connection_metadata(std::size_t id,
                                          websocketpp::connection_hdl hdl,
                                          std::string uri)
-        : m_id(id),
-          m_hdl(std::move(hdl)),
-          m_status("Connecting"),
-          m_uri(std::move(uri)),
-          m_server("N/A") {
+    : m_id(id),
+      m_hdl(std::move(hdl)),
+      m_status("Connecting"),
+      m_uri(std::move(uri)),
+      m_server("N/A") {
 }
 
-void connection_metadata::on_message(websocketpp::connection_hdl hdl,
-                                     const websocketpp::config::asio_client::message_type::ptr &msg) {
+void connection_metadata::on_message(
+    websocketpp::connection_hdl hdl,
+    const websocketpp::config::asio_client::message_type::ptr &msg) {
     endpoint.p.set_value(msg->get_payload());
 }
 
@@ -72,13 +73,14 @@ websocket_endpoint::websocket_endpoint() {
     init_connection();
 
     m_thread = websocketpp::lib::make_shared<websocketpp::lib::thread>(
-            &client::run, &m_endpoint);
+        &client::run, &m_endpoint);
 }
 
 void websocket_endpoint::init_connection() {
     websocketpp::lib::error_code ec;
     client::connection_ptr con = m_endpoint.get_connection(uri, ec);
-    connection_metadata::ptr metadata_ptr(new connection_metadata(0, con->get_handle(), uri));
+    connection_metadata::ptr metadata_ptr(
+        new connection_metadata(0, con->get_handle(), uri));
     m_connection = metadata_ptr;
     con->set_open_handler([metadata_ptr, capture0 = &m_endpoint](auto &&PH1) {
         metadata_ptr->on_open(capture0, std::forward<decltype(PH1)>(PH1));
@@ -90,7 +92,8 @@ void websocket_endpoint::init_connection() {
         metadata_ptr->on_close(capture0, std::forward<decltype(PH1)>(PH1));
     });
     con->set_message_handler([metadata_ptr](auto &&PH1, auto &&PH2) {
-        metadata_ptr->on_message(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2));
+        metadata_ptr->on_message(std::forward<decltype(PH1)>(PH1),
+                                 std::forward<decltype(PH2)>(PH2));
     });
     m_endpoint.connect(con);
 }

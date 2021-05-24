@@ -1,5 +1,9 @@
+#include <add_chat.h>
+#include <chat_view.h>
 #include <mainwindow.h>
+#include <message_view.h>
 #include <socket.h>
+#include <ui_mainwindow.h>
 #include <user.h>
 #include <QBrush>
 #include <QColor>
@@ -12,15 +16,11 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <unordered_map>
-#include <chat_view.h>
-#include <message_view.h>
-#include <ui_mainwindow.h>
-#include <add_chat.h>
 
 using json = nlohmann::json;
 
 MainWindow::MainWindow(QWidget *parent)
-        : QMainWindow(parent), ui(new Ui::MainWindow) {
+    : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
     update_chats();
@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->sendButton, &QPushButton::clicked, [this] {
         if ((ui->textEdit->toPlainText()).size() != 0) {
             ui->textEdit->setWordWrapMode(
-                    QTextOption::WrapAtWordBoundaryOrAnywhere);
+                QTextOption::WrapAtWordBoundaryOrAnywhere);
             QListWidgetItem *item = new QListWidgetItem;
             MessageViewIn *row = new MessageViewIn(ui->textEdit->toPlainText());
             row->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -51,9 +51,9 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    connect(ui->listWidget_2, SIGNAL(itemClicked(QListWidgetItem * )),
+    connect(ui->listWidget_2, SIGNAL(itemClicked(QListWidgetItem *)),
             ui->listWidget,
-            SLOT(on_listWidget_2_itemClicked(QListWidgetItem * )));
+            SLOT(on_listWidget_2_itemClicked(QListWidgetItem *)));
 
     connect(ui->AddChatButton, &QPushButton::clicked, [this] {
         add_chat *chooseWindow = new add_chat(nullptr, this);
@@ -67,7 +67,7 @@ void MainWindow::update_chats() {
     json chat_id;
     json chat_names;
 
-    //Getting all of the chats
+    // Getting all of the chats
     endpoint.p = std::promise<std::string>();
     endpoint.send("get_chat_list " + std::to_string(user.get_user_id()));
     auto future = endpoint.p.get_future();

@@ -2,8 +2,8 @@
 
 User user;
 
-User::User(const std::string &name, const std::size_t con_id) : username(name), connection_id(con_id) {
-
+User::User(const std::string &name, const std::size_t con_id)
+    : username(name), connection_id(con_id) {
 }
 
 std::string User::get_username() const {

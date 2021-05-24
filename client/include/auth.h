@@ -5,11 +5,11 @@
 #include <QMainWindow>
 
 namespace Ui {
-    class auth;
+class auth;
 }
 
 class auth : public QMainWindow {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     explicit auth(QWidget *parent = nullptr);

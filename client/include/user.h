@@ -30,4 +30,4 @@ public:
 
 extern User user;
 
-#endif //USER_H
+#endif  // USER_H
