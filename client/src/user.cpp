@@ -21,3 +21,11 @@ std::size_t User::get_user_id() const {
 void User::add_user_id(const std::size_t id) {
     user_id = id;
 }
+
+void User::set_trello_token(const std::string &token) {
+    trello_token = token;
+}
+
+std::string User::get_trello_token() const {
+    return trello_token;
+}

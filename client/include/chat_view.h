@@ -6,7 +6,7 @@
 
 class ChatView : public QWidget {
 public:
-    ChatView(const QString& name);
+    ChatView(const QString &name);
 };
 
 #endif  // CHAT_VIEW_H

@@ -6,6 +6,7 @@
 class User {
 private:
     std::string username;
+    std::string trello_token;
     std::size_t connection_id;
     std::size_t user_id;
 
@@ -21,6 +22,10 @@ public:
     [[nodiscard]] std::size_t get_user_id() const;
 
     void add_user_id(std::size_t);
+
+    void set_trello_token(const std::string &token);
+
+    [[nodiscard]] std::string get_trello_token() const;
 };
 
 extern User user;

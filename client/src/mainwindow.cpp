@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include <mainwindow.h>
 #include <socket.h>
 #include <user.h>
 #include <QBrush>
@@ -12,55 +12,25 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <unordered_map>
-#include "chat_view.h"
-#include "message_view.h"
-#include "ui_mainwindow.h"
+#include <chat_view.h>
+#include <message_view.h>
+#include <ui_mainwindow.h>
+#include <add_chat.h>
 
 using json = nlohmann::json;
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
+        : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
-    json chat_id, chat_names;
 
-    // TODO FIX THIS PART
+    update_chats();
 
-    if (user.get_user_id() != 0) {
-        endpoint.p = std::promise<std::string>();
-        endpoint.send("get_chat_list " + std::to_string(user.get_user_id()));
-        auto future = endpoint.p.get_future();
-        future.wait();
-        std::string response = future.get();
-        chat_id = json::parse(response);
-    }
-    for (auto x : chat_id) {
-        //        endpoint.p = std::promise<std::string>();
-        //        endpoint.send("get_chat_name " + x["chat_id"]);
-        //        chat_names.push_back(json::parse(response));
-        std::cout << x << std::endl;
-    }
-    std::string chat_list;
-
-    std::vector<std::pair<QString, std::size_t>> chat_names_id = {
-        {"Biba", 1},
-        {"Boba", 2},
-        {"Bobo", 3}};  // just for example, should be downloaded
-
-    for (auto x : chat_names_id) {
-        QListWidgetItem *item = new QListWidgetItem;
-        ChatView *row = new ChatView(/*x.first*/ "hello");
-        ui->listWidget_2->setWordWrap(true);
-        ui->listWidget_2->addItem(item);
-        ui->listWidget_2->setItemWidget(item, row);
-        item->setSizeHint(row->minimumSizeHint());
-        item->setFont(QFont("Helvetica [Cronyx]", 12));
-        item->setSizeHint(QSize(2, 52));
-    }
+    ui->listWidget_2->setCurrentRow(0);
 
     connect(ui->sendButton, &QPushButton::clicked, [this] {
         if ((ui->textEdit->toPlainText()).size() != 0) {
             ui->textEdit->setWordWrapMode(
-                QTextOption::WrapAtWordBoundaryOrAnywhere);
+                    QTextOption::WrapAtWordBoundaryOrAnywhere);
             QListWidgetItem *item = new QListWidgetItem;
             MessageViewIn *row = new MessageViewIn(ui->textEdit->toPlainText());
             row->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -81,17 +51,60 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    connect(ui->listWidget_2, SIGNAL(itemClicked(QListWidgetItem *)),
+    connect(ui->listWidget_2, SIGNAL(itemClicked(QListWidgetItem * )),
             ui->listWidget,
-            SLOT(on_listWidget_2_itemClicked(QListWidgetItem *)));
+            SLOT(on_listWidget_2_itemClicked(QListWidgetItem * )));
+
+    connect(ui->AddChatButton, &QPushButton::clicked, [this] {
+        add_chat *chooseWindow = new add_chat(nullptr, this);
+        chooseWindow->show();
+    });
 
     this->setFixedSize(1000, 600);
 }
 
-MainWindow::~MainWindow() {
-    delete ui;
+void MainWindow::update_chats() {
+    json chat_id;
+    json chat_names;
+
+    //Getting all of the chats
+    endpoint.p = std::promise<std::string>();
+    endpoint.send("get_chat_list " + std::to_string(user.get_user_id()));
+    auto future = endpoint.p.get_future();
+    future.wait();
+    std::string response = future.get();
+    chat_id = json::parse(response);
+
+    for (auto x : chat_id) {
+        endpoint.p = std::promise<std::string>();
+        endpoint.send("get_chat_name " + x["chat_id"].dump());
+        future = endpoint.p.get_future();
+        future.wait();
+        response = future.get();
+        chat_names.push_back(json::parse(response));
+    }
+
+    for (auto x : chat_names) {
+        QListWidgetItem *item = new QListWidgetItem;
+        std::string chat_name = x["chat_name"];
+        ChatView *row = new ChatView(QString::fromStdString(chat_name));
+        ui->listWidget_2->setWordWrap(true);
+        ui->listWidget_2->addItem(item);
+        ui->listWidget_2->setItemWidget(item, row);
+        item->setSizeHint(row->minimumSizeHint());
+        item->setFont(QFont("Helvetica [Cronyx]", 12));
+        item->setSizeHint(QSize(2, 52));
+    }
+}
+
+Ui::MainWindow *MainWindow::get_ui() const {
+    return ui;
 }
 
 void MainWindow::on_listWidget_2_itemClicked(QListWidgetItem *item) {
     ui->listWidget->clear();
+}
+
+MainWindow::~MainWindow() {
+    delete ui;
 }

@@ -21,7 +21,7 @@ public:
     using ptr = websocketpp::lib::shared_ptr<connection_metadata>;
 
     void on_message(websocketpp::connection_hdl hdl,
-                    const websocketpp::config::asio_client::message_type::ptr& msg);
+                    const websocketpp::config::asio_client::message_type::ptr &msg);
 
     void on_open(websocketpp::client<websocketpp::config::asio_client> *c, websocketpp::connection_hdl hdl);
 

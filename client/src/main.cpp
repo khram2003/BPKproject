@@ -1,8 +1,7 @@
-#include <user.h>
 #include <QApplication>
 #include <QStyleFactory>
-#include "auth.h"
-#include "mainwindow.h"
+#include <auth.h>
+#include <mainwindow.h>
 
 int main(int argc, char *argv[]) {
     try {

@@ -1,4 +1,4 @@
-#include "message_view.h"
+#include <message_view.h>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QSizePolicy>
@@ -9,8 +9,8 @@
     QHBoxLayout *row = new QHBoxLayout();
     QLabel *lbl = new QLabel;
     lbl->setStyleSheet(
-        "QLabel { background-color : #353535; color : white; border-width: "
-        "2px; border-radius: 10px; padding: 6px;}");
+            "QLabel { background-color : #353535; color : white; border-width: "
+            "2px; border-radius: 10px; padding: 6px;}");
     lbl->setAlignment(Qt::AlignCenter | Qt::AlignRight);
     lbl->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
     lbl->setWordWrap(true);
@@ -29,8 +29,8 @@ MessageViewIn::MessageViewIn(const QString &msg) {
     lblim->setPixmap(pm);
     lblim->setScaledContents(true);
     lbl->setStyleSheet(
-        "QLabel { background-color : #353535; color : white; border-width: "
-        "2px; border-radius: 10px; padding: 6px;}");
+            "QLabel { background-color : #353535; color : white; border-width: "
+            "2px; border-radius: 10px; padding: 6px;}");
     QSizePolicy spLeft(QSizePolicy::Minimum, QSizePolicy::Expanding);
     spLeft.setVerticalStretch(1);
     lbl->setSizePolicy(spLeft);

@@ -19,7 +19,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(RESOURCE resources.qrc)
-set(UI mainwindow.ui auth.ui)
+set(UI mainwindow.ui auth.ui add_chat.ui)
 qt6_wrap_ui(UI_HEADERS ${UI})
 
 set(SOURCES
@@ -30,6 +30,8 @@ set(SOURCES
         src/auth.cpp
         src/socket.cpp
         src/user.cpp
+        src/add_chat.cpp
+        src/trello.cpp
 
         include/mainwindow.h
         include/chat_view.h
@@ -37,6 +39,8 @@ set(SOURCES
         include/auth.h
         include/socket.h
         include/user.h
+        include/add_chat.h
+        include/trello.h
         )
 
 set(NETWORKING_LIBS)
