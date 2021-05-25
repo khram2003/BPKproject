@@ -9,7 +9,7 @@ class trello_auth;
 }
 
 class trello_auth : public QMainWindow {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     explicit trello_auth(QWidget *parent = nullptr);

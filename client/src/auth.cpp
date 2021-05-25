@@ -72,7 +72,6 @@ auth::auth(QWidget *parent) : QMainWindow(parent), ui(new Ui::auth) {
             }
         }
     });
-
 }
 
 auth::~auth() {

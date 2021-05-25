@@ -4,6 +4,9 @@
 #include <QListWidgetItem>
 #include <QMainWindow>
 #include <QStringListModel>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 namespace Ui {
 class MainWindow;
@@ -20,6 +23,8 @@ public:
     void update_chats();
 
     void update_messages(std::size_t chat_id);
+
+    void update_chats_ui();
 
     Ui::MainWindow *get_ui() const;
 
@@ -39,8 +44,9 @@ signals:
 
 private:
     Ui::MainWindow *ui;
-    int num_of_chats=0;
-    int size_of_answer=0;
+    int num_of_chats = 0;
+    int size_of_answer = 0;
+    json chat_names;
 };
 
 #endif  // MAINWINDOW_H

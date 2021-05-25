@@ -19,6 +19,7 @@
 #include <nlohmann/json.hpp>
 #include <thread>
 #include <unordered_map>
+#include <chrono>
 
 using json = nlohmann::json;
 
@@ -26,9 +27,15 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    update_chats();
-    num_of_chats = ui->listWidget_2->count();
+    std::thread t([&]() {
+        while (true) {
+            update_chats();
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
+    });
+    t.detach();
 
+    num_of_chats = ui->listWidget_2->count();
     ui->listWidget_2->setCurrentRow(0);
 
     connect(ui->sendButton, &QPushButton::clicked, [this] {
@@ -68,6 +75,7 @@ MainWindow::MainWindow(QWidget *parent)
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [this] {
         if (num_of_chats > size_of_answer) {
+            update_chats_ui();
         }
     });
 
@@ -78,8 +86,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::update_chats() {
     json chat_ids;
-    json chat_names;
-
+    //    json chat_names;
+    chat_names.clear();
     // Getting all of the chats
     endpoint.p = std::promise<std::string>();
     endpoint.send("get_chat_list " + std::to_string(user.get_user_id()));
@@ -97,19 +105,21 @@ void MainWindow::update_chats() {
         chat_names.push_back(json::parse(response));
     }
 
-    for (auto x : chat_names) {
-        QListWidgetItem *item = new QListWidgetItem;
-        std::string chat_name = x["chat_name"];
-        std::size_t chat_id = x["chat_id"];
-        icon_to_chat_id[item] = chat_id;
-        ChatView *row = new ChatView(QString::fromStdString(chat_name));
-        ui->listWidget_2->setWordWrap(true);
-        ui->listWidget_2->addItem(item);
-        ui->listWidget_2->setItemWidget(item, row);
-        item->setSizeHint(row->minimumSizeHint());
-        item->setFont(QFont("Helvetica [Cronyx]", 12));
-        item->setSizeHint(QSize(2, 52));
-    }
+    size_of_answer = chat_names.size();
+
+    //    for (auto x : chat_names) {
+    //        QListWidgetItem *item = new QListWidgetItem;
+    //        std::string chat_name = x["chat_name"];
+    //        std::size_t chat_id = x["chat_id"];
+    //        icon_to_chat_id[item] = chat_id;
+    //        ChatView *row = new ChatView(QString::fromStdString(chat_name));
+    //        ui->listWidget_2->setWordWrap(true);
+    //        ui->listWidget_2->addItem(item);
+    //        ui->listWidget_2->setItemWidget(item, row);
+    //        item->setSizeHint(row->minimumSizeHint());
+    //        item->setFont(QFont("Helvetica [Cronyx]", 12));
+    //        item->setSizeHint(QSize(2, 52));
+    //    }
 }
 void MainWindow::update_messages(std::size_t chat_id) {
     endpoint.p = std::promise<std::string>();
@@ -148,4 +158,19 @@ void MainWindow::on_listWidget_2_itemClicked(QListWidgetItem *item) {
 
 MainWindow::~MainWindow() {
     delete ui;
+}
+void MainWindow::update_chats_ui() {
+    for (auto x : chat_names) {
+        QListWidgetItem *item = new QListWidgetItem;
+        std::string chat_name = x["chat_name"];
+        std::size_t chat_id = x["chat_id"];
+        icon_to_chat_id[item] = chat_id;
+        ChatView *row = new ChatView(QString::fromStdString(chat_name));
+        ui->listWidget_2->setWordWrap(true);
+        ui->listWidget_2->addItem(item);
+        ui->listWidget_2->setItemWidget(item, row);
+        item->setSizeHint(row->minimumSizeHint());
+        item->setFont(QFont("Helvetica [Cronyx]", 12));
+        item->setSizeHint(QSize(2, 52));
+    }
 }

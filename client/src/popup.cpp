@@ -1,27 +1,31 @@
 #include "popup.h"
-#include <QPainter>
 #include <QApplication>
-#include <QWidget>
 #include <QDebug>
+#include <QPainter>
+#include <QWidget>
 
-PopUp::PopUp(QWidget *parent) : QWidget(parent)
-{
-    setWindowFlags(Qt::FramelessWindowHint |        // Disable window decoration
-                   Qt::Tool |                       // Discard display in a separate window
-                   Qt::WindowStaysOnTopHint);       // Set on top of all windows
-    setAttribute(Qt::WA_TranslucentBackground);     // Indicates that the background will be transparent
-    setAttribute(Qt::WA_ShowWithoutActivating);     // At the show, the widget does not get the focus automatically
+PopUp::PopUp(QWidget *parent) : QWidget(parent) {
+    setWindowFlags(Qt::FramelessWindowHint |  // Disable window decoration
+                   Qt::Tool |  // Discard display in a separate window
+                   Qt::WindowStaysOnTopHint);  // Set on top of all windows
+    setAttribute(
+        Qt::WA_TranslucentBackground);  // Indicates that the background will be
+                                        // transparent
+    setAttribute(
+        Qt::WA_ShowWithoutActivating);  // At the show, the widget does not get
+                                        // the focus automatically
 
-    animation.setTargetObject(this);                // Set the target animation
-    animation.setPropertyName("popupOpacity");      //
+    animation.setTargetObject(this);            // Set the target animation
+    animation.setPropertyName("popupOpacity");  //
     connect(&animation, &QAbstractAnimation::finished, this, &PopUp::hide);
 
     label.setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    label.setStyleSheet("QLabel { color : white; "
-                        "margin-top: 6px;"
-                        "margin-bottom: 6px;"
-                        "margin-left: 10px;"
-                        "margin-right: 10px; }");
+    label.setStyleSheet(
+        "QLabel { color : white; "
+        "margin-top: 6px;"
+        "margin-bottom: 6px;"
+        "margin-left: 10px;"
+        "margin-right: 10px; }");
 
     layout.addWidget(&label, 0, 0);
     setLayout(&layout);
@@ -30,8 +34,7 @@ PopUp::PopUp(QWidget *parent) : QWidget(parent)
     connect(timer, &QTimer::timeout, this, &PopUp::hideAnimation);
 }
 
-void PopUp::paintEvent(QPaintEvent *event)
-{
+void PopUp::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event)
 
     QPainter painter(this);
@@ -43,38 +46,37 @@ void PopUp::paintEvent(QPaintEvent *event)
     roundedRect.setWidth(rect().width() - 10);
     roundedRect.setHeight(rect().height() - 10);
 
-    painter.setBrush(QBrush(QColor(0,0,0,180)));
+    painter.setBrush(QBrush(QColor(0, 0, 0, 180)));
     painter.setPen(Qt::NoPen);
 
     painter.drawRoundedRect(roundedRect, 10, 10);
 }
 
-void PopUp::setPopupText(const QString &text)
-{
-    label.setText(text);    // Set the text in the Label
-    adjustSize();           // With the recalculation notice sizes
+void PopUp::setPopupText(const QString &text) {
+    label.setText(text);  // Set the text in the Label
+    adjustSize();         // With the recalculation notice sizes
 }
 
-void PopUp::show()
-{
+void PopUp::show() {
     setWindowOpacity(0.0);  // Set the transparency to zero
 
-    animation.setDuration(150);     // Configuring the duration of the animation
-    animation.setStartValue(0.0);   // The start value is 0 (fully transparent widget)
-    animation.setEndValue(1.0);     // End - completely opaque widget
+    animation.setDuration(150);  // Configuring the duration of the animation
+    animation.setStartValue(
+        0.0);  // The start value is 0 (fully transparent widget)
+    animation.setEndValue(1.0);  // End - completely opaque widget
 
-//    setGeometry(QApplication::desktop()->availableGeometry().width() - 36 - width() + QApplication::desktop() -> availableGeometry().x(),
-//                QApplication::desktop()->availableGeometry().height() - 36 - height() + QApplication::desktop() -> availableGeometry().y(),
-//                width(),
-//                height());
+    //    setGeometry(QApplication::desktop()->availableGeometry().width() - 36
+    //    - width() + QApplication::desktop() -> availableGeometry().x(),
+    //                QApplication::desktop()->availableGeometry().height() - 36
+    //                - height() + QApplication::desktop() ->
+    //                availableGeometry().y(), width(), height());
     QWidget::show();
 
     animation.start();
     timer->start(3000);
 }
 
-void PopUp::hideAnimation()
-{
+void PopUp::hideAnimation() {
     timer->stop();
     animation.setDuration(1000);
     animation.setStartValue(1.0);
@@ -82,21 +84,18 @@ void PopUp::hideAnimation()
     animation.start();
 }
 
-void PopUp::hide()
-{
-    if(getPopupOpacity() == 0.0){
+void PopUp::hide() {
+    if (getPopupOpacity() == 0.0) {
         QWidget::hide();
     }
 }
 
-void PopUp::setPopupOpacity(float opacity)
-{
+void PopUp::setPopupOpacity(float opacity) {
     popupOpacity = opacity;
 
     setWindowOpacity(opacity);
 }
 
-float PopUp::getPopupOpacity() const
-{
+float PopUp::getPopupOpacity() const {
     return popupOpacity;
 }
