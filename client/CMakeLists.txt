@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6Core REQUIRED)
 find_package(Qt6Widgets REQUIRED)
 find_package(Qt6Gui REQUIRED)
+find_package(Qt6NetworkAuth REQUIRED)
 find_package(Boost COMPONENTS thread system REQUIRED)
 
 set(CMAKE_AUTOMOC ON)

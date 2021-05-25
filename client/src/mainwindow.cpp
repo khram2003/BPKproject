@@ -13,8 +13,10 @@
 #include <QPixmap>
 #include <QPushButton>
 #include <QShortcut>
+#include <QTimer>
 #include <iostream>
 #include <nlohmann/json.hpp>
+#include <thread>
 #include <unordered_map>
 
 using json = nlohmann::json;
@@ -42,11 +44,12 @@ MainWindow::MainWindow(QWidget *parent)
             item->setFont(QFont("Helvetica [Cronyx]", 12));
             // TODO .send(add_message)
             endpoint.p = std::promise<std::string>();
-            endpoint.send("echo " + ui->textEdit->toPlainText().toStdString());
-            auto future = endpoint.p.get_future();
-            future.wait();
-            std::string s = future.get();
-            std::cout << s << std::endl;
+            endpoint.send("add_message 1 " +
+                          std::to_string(user.get_user_id()) + " " +
+                          ui->textEdit->toPlainText().toStdString());
+            std::string response = endpoint.update_future();
+            // TODO check if message is sent
+            assert(response != "FAIL");
             ui->textEdit->setPlainText("");
         }
     });
@@ -60,33 +63,40 @@ MainWindow::MainWindow(QWidget *parent)
         chooseWindow->show();
     });
 
+    //    QTimer *timer = new QTimer(this);
+    //    connect(timer, &QTimer::timeout, this,
+    //    SLOT(on_listWidget_2_itemClicked(QListWidgetItem *)));
+    //    timer->start(1000);
+
     this->setFixedSize(1000, 600);
 }
 
 void MainWindow::update_chats() {
-    json chat_id;
+    json chat_ids;
     json chat_names;
 
     // Getting all of the chats
     endpoint.p = std::promise<std::string>();
     endpoint.send("get_chat_list " + std::to_string(user.get_user_id()));
-    auto future = endpoint.p.get_future();
-    future.wait();
-    std::string response = future.get();
-    chat_id = json::parse(response);
+    std::string response = endpoint.update_future();
+    // todo check if some problems occurred
+    assert(response != "FAIL");
+    chat_ids = json::parse(response);
 
-    for (auto x : chat_id) {
+    for (auto x : chat_ids) {
         endpoint.p = std::promise<std::string>();
         endpoint.send("get_chat_name " + x["chat_id"].dump());
-        future = endpoint.p.get_future();
-        future.wait();
-        response = future.get();
+        response = endpoint.update_future();
+        // todo check fail
+        assert(response != "FAIL");
         chat_names.push_back(json::parse(response));
     }
 
     for (auto x : chat_names) {
         QListWidgetItem *item = new QListWidgetItem;
         std::string chat_name = x["chat_name"];
+        std::size_t chat_id = x["chat_id"];
+        icon_to_chat_id[item] = chat_id;
         ChatView *row = new ChatView(QString::fromStdString(chat_name));
         ui->listWidget_2->setWordWrap(true);
         ui->listWidget_2->addItem(item);
@@ -97,12 +107,39 @@ void MainWindow::update_chats() {
     }
 }
 
+void MainWindow::update_messages(std::size_t chat_id) {
+    endpoint.p = std::promise<std::string>();
+    endpoint.send("get_chat_history " + std::to_string(chat_id));
+    std::string response = endpoint.update_future();
+    // todo check fail
+    assert(response != "FAIL");
+    json messages = json::parse(response);
+
+    for (auto mess : messages) {
+        ui->textEdit->setWordWrapMode(
+            QTextOption::WrapAtWordBoundaryOrAnywhere);
+        QListWidgetItem *item = new QListWidgetItem;
+        // std::cerr << mess["message_text"].dump() << std::endl;
+        MessageViewIn *row = new MessageViewIn(
+            QString::fromStdString(mess["message_text"].get<std::string>()));
+        row->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        ui->listWidget->setSizeAdjustPolicy(QListWidget::AdjustToContents);
+        ui->listWidget->setWordWrap(true);
+        ui->listWidget->addItem(item);
+        ui->listWidget->setItemWidget(item, row);
+        item->setSizeHint(row->sizeHint());
+        item->setFont(QFont("Helvetica [Cronyx]", 12));
+    }
+}
+
 Ui::MainWindow *MainWindow::get_ui() const {
     return ui;
 }
 
 void MainWindow::on_listWidget_2_itemClicked(QListWidgetItem *item) {
     ui->listWidget->clear();
+    update_messages(icon_to_chat_id[item]);
+    // ui->listWidget->clear();
 }
 
 MainWindow::~MainWindow() {

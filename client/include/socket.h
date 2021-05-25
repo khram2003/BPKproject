@@ -62,6 +62,8 @@ public:
 
     void send(const std::string &message);
 
+    std::string update_future();
+
     ~websocket_endpoint();
 };
 

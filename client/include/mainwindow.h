@@ -19,7 +19,11 @@ public:
 
     void update_chats();
 
+    void update_messages(std::size_t chat_id);
+
     Ui::MainWindow *get_ui() const;
+
+    std::unordered_map<QListWidgetItem *, std::size_t> icon_to_chat_id;
 
 signals:
 

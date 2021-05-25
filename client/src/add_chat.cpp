@@ -18,16 +18,27 @@ add_chat::add_chat(QWidget *parent, MainWindow *messWin)
 
     connect(ui->AddButton, &QPushButton::clicked, [this] {
         std::string chat_name = ui->lineEdit->text().toStdString();
-        endpoint.send("add_chat " + chat_name);
+        std::string chat_exists = "FAIL";
+        // TODO make pop up window
+        while (chat_exists != "SUCCESS") {
+            endpoint.p = std::promise<std::string>();
+            // TODO REQUEST TO CHANGE CHAT NAME BECAUSE NOW ITS INF LOOP
+            endpoint.send("add_chat " + chat_name);
+            chat_exists = endpoint.update_future();
+        }
         endpoint.p = std::promise<std::string>();
         endpoint.send("get_chat_id " + chat_name);
-        auto future = endpoint.p.get_future();
-        future.wait();
-        std::string response = future.get();
+        std::string response = endpoint.update_future();
+        // todo check fail
+        assert(response != "FAIL");
         json j = json::parse(response);
+        endpoint.p = std::promise<std::string>();
         endpoint.send("link_user_to_chat " +
                       std::to_string(user.get_user_id()) + " " +
                       j["chat_id"].dump());
+        response = endpoint.update_future();
+        // todo check fail
+        assert(response != "FAIL");
         mess->get_ui()->listWidget_2->clear();
         mess->update_chats();
         hide();

@@ -107,6 +107,12 @@ void websocket_endpoint::send(const std::string &message) {
     }
 }
 
+std::string websocket_endpoint::update_future() {
+    auto future = p.get_future();
+    future.wait();
+    return future.get();
+}
+
 websocket_endpoint::~websocket_endpoint() {
     m_endpoint.stop_perpetual();
     websocketpp::lib::error_code ec;
