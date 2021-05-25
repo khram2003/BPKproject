@@ -1,4 +1,4 @@
-#include "message_view.h"
+#include <message_view.h>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QSizePolicy>

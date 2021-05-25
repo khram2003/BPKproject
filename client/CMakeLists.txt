@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6Core REQUIRED)
 find_package(Qt6Widgets REQUIRED)
 find_package(Qt6Gui REQUIRED)
-find_package(Qt6 COMPONENTS NetworkAuth REQUIRED)
+find_package(Qt6NetworkAuth REQUIRED)
 find_package(Boost COMPONENTS thread system REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
@@ -20,7 +20,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(RESOURCE resources.qrc)
-set(UI mainwindow.ui)# auth.ui add_chat.ui)
+set(UI mainwindow.ui auth.ui add_chat.ui trello_auth.ui)
 qt6_wrap_ui(UI_HEADERS ${UI})
 
 set(SOURCES
@@ -29,20 +29,23 @@ set(SOURCES
         src/chat_view.cpp
         src/message_view.cpp
         src/authtest.cpp
-        #src/socket.cpp
-        #src/user.cpp
-        #src/add_chat.cpp
-        #src/trello.cpp
+        src/auth.cpp
+        src/socket.cpp
+        src/user.cpp
+        src/add_chat.cpp
+        src/trello.cpp
 
         include/mainwindow.h
         include/chat_view.h
         include/message_view.h
         include/authtest.h
-        #include/socket.h
-        #include/user.h
-        #include/add_chat.h
-        #include/trello.h
-        )
+        include/auth.h
+        include/socket.h
+        include/user.h
+        include/add_chat.h
+        include/trello.h
+        src/trello_auth.cpp include/trello_auth.h src/popup.cpp include/popup.h
+)
 
 set(NETWORKING_LIBS)
 if (WIN32 AND NOT MSVC AND NOT BORLAND)

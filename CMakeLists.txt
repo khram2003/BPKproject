@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.13)
 project(BPKproject)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -6,9 +6,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(BUILD_CLIENT "Build client" ON)
 
-find_package(PostgreSQL)
+find_package(PostgreSQL REQUIRED)
 
-set(LIBPQXX_VERSION "libpqxx-7.3.1")
+set(LIBPQXX_VERSION "libpqxx-7.5.2")
 set(WEBSOCKETPP_VERSION "websocketpp-0.8.2")
 set(JSON_VERSION "json-3.9.1")
 
@@ -18,6 +18,6 @@ add_subdirectory(third-party/${WEBSOCKETPP_VERSION})
 add_subdirectory(model)
 include_directories(model)
 if (BUILD_CLIENT)
-    add_subdirectory(client)
+  add_subdirectory(client)
 endif()
 add_subdirectory(server)
