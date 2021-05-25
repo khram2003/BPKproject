@@ -39,6 +39,8 @@ signals:
 
 private:
     Ui::MainWindow *ui;
+    int num_of_chats=0;
+    int size_of_answer=0;
 };
 
 #endif  // MAINWINDOW_H

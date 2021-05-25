@@ -2,6 +2,7 @@
 #define AUTH_H
 
 #include <mainwindow.h>
+#include <trello_auth.h>
 #include <QMainWindow>
 
 namespace Ui {
@@ -19,6 +20,7 @@ public:
 private:
     Ui::auth *ui;
     MainWindow *messWindow;
+    trello_auth *trelloWindow;
 };
 
 #endif  // AUTH_H

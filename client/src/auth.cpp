@@ -58,35 +58,21 @@ auth::auth(QWidget *parent) : QMainWindow(parent), ui(new Ui::auth) {
                               j["chat_id"].get<std::string>());
                 response = endpoint.update_future();
                 assert(response != "FAIL");
+                ui->lineEdit->setText("");
+                hide();
+                trelloWindow = new trello_auth();
+                trelloWindow->show();
+                this->close();
+            } else {
+                ui->lineEdit->setText("");
+                hide();
+                messWindow = new MainWindow();
+                messWindow->show();
+                this->close();
             }
-            ui->lineEdit->setText("");
-            hide();
-            messWindow = new MainWindow();
-            messWindow->show();
-            this->close();
         }
     });
 
-    connect(ui->TrelloButton, &QPushButton::clicked, [this, trello, &new_user] {
-        QString req =
-            "https://trello.com/1/"
-            "authorize?expiration=1day&name=MyPersonalToken&scope=read&"
-            "response_type=token&key=" +
-            trello.get_api_key();
-        QDesktopServices::openUrl(QUrl(req, QUrl::TolerantMode));
-        user.set_trello_token((ui->lineEdit_2->text()).toStdString());
-        // TODO
-        if (new_user) {
-            endpoint.p = std::promise<std::string>();
-            endpoint.send("set_trello_token " +
-                          std::to_string(user.get_user_id()) + " " +
-                          user.get_trello_token());
-            std::string response = endpoint.update_future();
-            assert(response != "FAIL");
-        }
-    });
-
-    this->setFixedSize(400, 400);
 }
 
 auth::~auth() {

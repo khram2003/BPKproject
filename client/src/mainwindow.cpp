@@ -2,6 +2,7 @@
 #include <chat_view.h>
 #include <mainwindow.h>
 #include <message_view.h>
+#include <popup.h>
 #include <socket.h>
 #include <ui_mainwindow.h>
 #include <user.h>
@@ -26,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     update_chats();
+    num_of_chats = ui->listWidget_2->count();
 
     ui->listWidget_2->setCurrentRow(0);
 
@@ -63,10 +65,13 @@ MainWindow::MainWindow(QWidget *parent)
         chooseWindow->show();
     });
 
-    //    QTimer *timer = new QTimer(this);
-    //    connect(timer, &QTimer::timeout, this,
-    //    SLOT(on_listWidget_2_itemClicked(QListWidgetItem *)));
-    //    timer->start(1000);
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, [this] {
+        if (num_of_chats > size_of_answer) {
+        }
+    });
+
+    timer->start(1000);
 
     this->setFixedSize(1000, 600);
 }
@@ -106,7 +111,6 @@ void MainWindow::update_chats() {
         item->setSizeHint(QSize(2, 52));
     }
 }
-
 void MainWindow::update_messages(std::size_t chat_id) {
     endpoint.p = std::promise<std::string>();
     endpoint.send("get_chat_history " + std::to_string(chat_id));
