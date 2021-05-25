@@ -27,15 +27,15 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    std::thread t([&]() {
-        while (true) {
-            update_chats();
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        }
-    });
-    t.detach();
+    //update_chats();
+//    std::thread t([&]() {
+//        while (true) {
+//            update_chats();
+//            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+//        }
+//    });
+//    t.detach();
 
-    num_of_chats = ui->listWidget_2->count();
     ui->listWidget_2->setCurrentRow(0);
 
     connect(ui->sendButton, &QPushButton::clicked, [this] {
@@ -74,8 +74,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [this] {
+        update_chats();
         if (num_of_chats > size_of_answer) {
             update_chats_ui();
+        //    num_of_chats = ui->listWidget_2->count();
+            //todo
+            ui->listWidget_2->setCurrentRow(0);
         }
     });
 
@@ -160,6 +164,7 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 void MainWindow::update_chats_ui() {
+    ui->listWidget_2->clear();
     for (auto x : chat_names) {
         QListWidgetItem *item = new QListWidgetItem;
         std::string chat_name = x["chat_name"];

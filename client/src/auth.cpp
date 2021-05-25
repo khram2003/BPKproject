@@ -55,7 +55,7 @@ auth::auth(QWidget *parent) : QMainWindow(parent), ui(new Ui::auth) {
                 endpoint.p = std::promise<std::string>();
                 endpoint.send("link_user_to_chat " +
                               std::to_string(user.get_user_id()) + " " +
-                              j["chat_id"].get<std::string>());
+                              j["chat_id"].dump());
                 response = endpoint.update_future();
                 assert(response != "FAIL");
                 ui->lineEdit->setText("");

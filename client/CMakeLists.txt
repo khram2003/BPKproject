@@ -28,7 +28,7 @@ set(SOURCES
         src/mainwindow.cpp
         src/chat_view.cpp
         src/message_view.cpp
-        src/authtest.cpp
+        #src/authtest.cpp
         src/auth.cpp
         src/socket.cpp
         src/user.cpp
@@ -38,7 +38,7 @@ set(SOURCES
         include/mainwindow.h
         include/chat_view.h
         include/message_view.h
-        include/authtest.h
+        #include/authtest.h
         include/auth.h
         include/socket.h
         include/user.h
