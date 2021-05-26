@@ -20,7 +20,7 @@ trello_auth::trello_auth(QWidget *parent)
 
     bool new_user = false;
 
-    connect(ui->TrelloButton, &QPushButton::clicked, [this, trello, &new_user] {
+    connect(ui->TrelloButton, &QPushButton::clicked, [trello] {
         QString req =
             "https://trello.com/1/"
             "authorize?expiration=never&name=MyPersonalToken&scope=read&"
@@ -29,20 +29,21 @@ trello_auth::trello_auth(QWidget *parent)
         QDesktopServices::openUrl(QUrl(req, QUrl::TolerantMode));
     });
 
-    connect(ui->TokenButton, &QPushButton::clicked, [this, trello, &new_user] {
-        user.set_trello_token((ui->lineEdit_2->text()).toStdString());
-        // TODO
-        if (new_user) {
-            endpoint.send("set_trello_token " +
-                          std::to_string(user.get_user_id()) + " " +
-                          user.get_trello_token());
-        }
-        ui->lineEdit_2->setText("");
-        hide();
-        messWindow = new MainWindow();
-        messWindow->show();
-        this->close();
-    });
+    connect(ui->TokenButton, &QPushButton::clicked,
+            [this, trello, new_user]() mutable {
+                user.set_trello_token((ui->lineEdit_2->text()).toStdString());
+                // TODO
+                if (new_user) {
+                    endpoint.send("set_trello_token " +
+                                  std::to_string(user.get_user_id()) + " " +
+                                  user.get_trello_token());
+                }
+                ui->lineEdit_2->setText("");
+                hide();
+                messWindow = new MainWindow();
+                messWindow->show();
+                this->close();
+            });
 
     this->setFixedSize(400, 400);
 }

@@ -47,6 +47,7 @@ private:
     int num_of_chats = 0;
     int size_of_answer = 0;
     json chat_names;
+    int current_chat = 0;
 };
 
 #endif  // MAINWINDOW_H
