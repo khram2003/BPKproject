@@ -30,8 +30,6 @@ add_chat::add_chat(QWidget *parent, MainWindow *messWin)
         } else {
             std::string response =
                 endpoint.send_blocking("get_chat_id " + chat_name);
-            // todo check fail
-            assert(response != "FAIL");
             if (response == "FAIL") {
                 up = new PopUp();
                 up->setPopupText(
@@ -42,8 +40,6 @@ add_chat::add_chat(QWidget *parent, MainWindow *messWin)
             response = endpoint.send_blocking(
                 "link_user_to_chat " + std::to_string(user.get_user_id()) +
                 " " + j["chat_id"].dump());
-            // todo check fail
-            assert(response != "FAIL");
             if (response == "FAIL") {
                 up = new PopUp();
                 up->setPopupText(

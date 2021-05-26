@@ -141,9 +141,20 @@ public:
         std::string insert_into =
             "INSERT INTO UserID_ChatID (user_id, chat_id) Values (" +
             std::to_string(user_id) + ", " + std::to_string(chat_id) + ")";
+        std::string check_link =
+            "SELECT user_id, chat_id FROM UserID_ChatID WHERE user_id = " +
+            std::to_string(user_id) +
+            " AND chat_id = " + std::to_string(chat_id);
         try {
             pqxx::work W(C);
-            W.exec(insert_into);
+            pqxx::result r = W.exec(check_link);
+            bool link_exists = false;
+            for (auto row = r.begin(); row != r.end(); row++) {
+                link_exists = true;
+            }
+            if (!link_exists) {
+                W.exec(insert_into);
+            }
             W.commit();
             return success;
         } catch (std::exception const &e) {

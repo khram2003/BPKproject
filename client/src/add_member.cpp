@@ -32,7 +32,6 @@ add_member::add_member(QWidget *parent, MainWindow *messWin)
             response = endpoint.send_blocking(
                 "link_user_to_chat " + j["user_id"].dump() + " " +
                 std::to_string(mess->get_current_chat_id()));
-            assert(response != "FAIL");
             if (response == "FAIL") {
                 up = new PopUp();
                 up->setPopupText(

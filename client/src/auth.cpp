@@ -37,7 +37,7 @@ auth::auth(QWidget *parent) : QMainWindow(parent), ui(new Ui::auth) {
                 response =
                     endpoint.send_blocking("find_user " + user.get_username());
             }
-            auto j = json::parse(response);
+            json j = json::parse(response);
             user.add_user_id(j["user_id"]);
             if (new_user) {
                 // Adding first chat
@@ -47,7 +47,7 @@ auth::auth(QWidget *parent) : QMainWindow(parent), ui(new Ui::auth) {
                 assert(response != "FAIL");
                 response = endpoint.send_blocking("get_chat_id " + first_chat);
                 assert(response != "FAIL");
-                json j = json::parse(response);
+                j = json::parse(response);
                 endpoint.send_blocking("link_user_to_chat " +
                                        std::to_string(user.get_user_id()) +
                                        " " + j["chat_id"].dump());

@@ -56,8 +56,6 @@ MainWindow::MainWindow(QWidget *parent)
                 "add_message " + std::to_string(chat_id) + " " +
                 std::to_string(user.get_user_id()) + " " +
                 ui->textEdit->toPlainText().toStdString());
-            // TODO check if message is sent
-            assert(response != "FAIL");
             if (response == "FAIL") {
                 up = new PopUp();
                 up->setPopupText(
@@ -102,8 +100,6 @@ void MainWindow::update_chats() {
     chat_names.clear();
     std::string response = endpoint.send_blocking(
         "get_chat_list " + std::to_string(user.get_user_id()));
-    // todo check if some problems occurred
-    assert(response != "FAIL");
     if (response == "FAIL") {
         up = new PopUp();
         up->setPopupText(
@@ -115,8 +111,6 @@ void MainWindow::update_chats() {
     for (auto x : chat_ids) {
         response =
             endpoint.send_blocking("get_chat_name " + x["chat_id"].dump());
-        // todo check fail
-        assert(response != "FAIL");
         if (response == "FAIL") {
             up = new PopUp();
             up->setPopupText(
@@ -131,8 +125,6 @@ void MainWindow::update_chats() {
 void MainWindow::update_messages(std::size_t chat_id) {
     std::string response =
         endpoint.send_blocking("get_chat_history " + std::to_string(chat_id));
-    // todo check fail
-    assert(response != "FAIL");
     if (response == "FAIL") {
         up = new PopUp();
         up->setPopupText(
