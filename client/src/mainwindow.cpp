@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     update_chats();
     num_of_chats = 0;
+    update_chats_ui();
+    update_messages(icon_to_chat_id[ui->listWidget_2->item(0)]);
     ui->listWidget_2->setCurrentRow(current_chat);
 
     connect(ui->sendButton, &QPushButton::clicked, [this] {
@@ -46,7 +48,9 @@ MainWindow::MainWindow(QWidget *parent)
             item->setFont(QFont("Helvetica [Cronyx]", 12));
             // TODO .send(add_message)
             endpoint.p = std::promise<std::string>();
-            endpoint.send("add_message 1 " +
+            std::size_t chat_id =
+                icon_to_chat_id[ui->listWidget_2->item(current_chat)];
+            endpoint.send("add_message " + std::to_string(chat_id) + " " +
                           std::to_string(user.get_user_id()) + " " +
                           ui->textEdit->toPlainText().toStdString());
             std::string response = endpoint.update_future();

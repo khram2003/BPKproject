@@ -45,7 +45,7 @@ set(SOURCES
         include/add_chat.h
         include/trello.h
         src/trello_auth.cpp include/trello_auth.h src/popup.cpp include/popup.h
-)
+        src/auth_google.cpp include/auth_google.h)
 
 set(NETWORKING_LIBS)
 if (WIN32 AND NOT MSVC AND NOT BORLAND)

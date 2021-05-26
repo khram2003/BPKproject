@@ -1,4 +1,5 @@
 #include <auth.h>
+#include <auth_google.h>
 #include <mainwindow.h>
 #include <socket.h>
 #include <trello.h>
@@ -19,6 +20,7 @@ auth::auth(QWidget *parent) : QMainWindow(parent), ui(new Ui::auth) {
 
     connect(ui->AuthButton, &QPushButton::clicked, [this, new_user]() mutable {
         if ((ui->lineEdit->text()).size() != 0) {
+            //        GoogleAuth ga;
             // TODO FIX LOGIC IN THIS METHOD ASAP
             user = User(ui->lineEdit->text().toStdString(), 0);
             endpoint.p = std::promise<std::string>();
