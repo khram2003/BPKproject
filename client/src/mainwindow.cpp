@@ -1,9 +1,11 @@
 #include <add_chat.h>
+#include <add_member.h>
 #include <chat_view.h>
 #include <mainwindow.h>
 #include <message_view.h>
 #include <popup.h>
 #include <socket.h>
+#include <ui_add_member.h>
 #include <ui_mainwindow.h>
 #include <user.h>
 #include <QBrush>
@@ -32,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
     update_chats_ui();
     update_messages(icon_to_chat_id[ui->listWidget_2->item(0)]);
     ui->listWidget_2->setCurrentRow(current_chat);
+    ui->label->setText(icon_to_name[ui->listWidget_2->item(current_chat)]);
 
     connect(ui->sendButton, &QPushButton::clicked, [this] {
         if ((ui->textEdit->toPlainText()).size() != 0) {
@@ -65,6 +68,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->AddChatButton, &QPushButton::clicked, [this] {
         add_chat *chooseWindow = new add_chat(nullptr, this);
         chooseWindow->show();
+    });
+
+    connect(ui->memberButton, &QPushButton::clicked, [this] {
+      add_member *memberWindow = new add_member(nullptr);
+      memberWindow->show();
     });
 
     QTimer *timer = new QTimer(this);
@@ -133,6 +141,7 @@ void MainWindow::on_listWidget_2_itemClicked(QListWidgetItem *item) {
     ui->listWidget->clear();
     current_chat = ui->listWidget_2->currentRow();
     update_messages(icon_to_chat_id[item]);
+    ui->label->setText(icon_to_name[ui->listWidget_2->item(current_chat)]);
 }
 
 MainWindow::~MainWindow() {
@@ -145,6 +154,7 @@ void MainWindow::update_chats_ui() {
         std::string chat_name = x["chat_name"];
         std::size_t chat_id = x["chat_id"];
         icon_to_chat_id[item] = chat_id;
+        icon_to_name[item]=QString::fromStdString(chat_name);
         ChatView *row = new ChatView(QString::fromStdString(chat_name));
         ui->listWidget_2->setWordWrap(true);
         ui->listWidget_2->addItem(item);

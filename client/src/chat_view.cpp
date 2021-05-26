@@ -7,10 +7,13 @@
 
 ChatView::ChatView(const QString &name) {
     auto *row = new QHBoxLayout();
-    auto *lbl = new QLabel;
+    lbl = new QLabel;
     lbl->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
     lbl->setWordWrap(true);
     lbl->setText(name);
     row->addWidget(lbl);
     setLayout(row);
+}
+QString ChatView::get_name() const {
+    return lbl->text();
 }

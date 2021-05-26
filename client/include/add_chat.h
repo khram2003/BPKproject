@@ -2,6 +2,7 @@
 #define ADD_CHAT_H
 
 #include <mainwindow.h>
+#include <popup.h>
 #include <ui_mainwindow.h>
 #include <QMainWindow>
 
@@ -20,6 +21,7 @@ public:
 private:
     Ui::add_chat *ui;
     MainWindow *mess;
+    PopUp *up;
 };
 
 #endif  // ADD_CHAT_H

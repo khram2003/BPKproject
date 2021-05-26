@@ -29,6 +29,7 @@ public:
     Ui::MainWindow *get_ui() const;
 
     std::unordered_map<QListWidgetItem *, std::size_t> icon_to_chat_id;
+    std::unordered_map<QListWidgetItem *, QString> icon_to_name;
 
 signals:
 

@@ -20,7 +20,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(RESOURCE resources.qrc)
-set(UI mainwindow.ui auth.ui add_chat.ui trello_auth.ui)
+set(UI mainwindow.ui auth.ui add_chat.ui trello_auth.ui add_member.ui)
 qt6_wrap_ui(UI_HEADERS ${UI})
 
 set(SOURCES
@@ -36,6 +36,7 @@ set(SOURCES
         src/trello_auth.cpp
         src/popup.cpp
         src/auth_google.cpp
+        src/add_member.cpp
 
         include/mainwindow.h
         include/chat_view.h
@@ -47,7 +48,8 @@ set(SOURCES
         include/trello.h
         include/trello_auth.h
         include/popup.h
-        include/auth_google.h)
+        include/auth_google.h
+        include/add_member.h)
 
 set(NETWORKING_LIBS)
 if (WIN32 AND NOT MSVC AND NOT BORLAND)

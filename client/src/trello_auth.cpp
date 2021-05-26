@@ -18,8 +18,6 @@ trello_auth::trello_auth(QWidget *parent)
 
     Trello trello;
 
-    bool new_user = false;
-
     connect(ui->TrelloButton, &QPushButton::clicked, [trello] {
         QString req =
             "https://trello.com/1/"
@@ -29,20 +27,18 @@ trello_auth::trello_auth(QWidget *parent)
         QDesktopServices::openUrl(QUrl(req, QUrl::TolerantMode));
     });
 
-    connect(ui->TokenButton, &QPushButton::clicked,
-            [this, trello, new_user]() mutable {
-                user.set_trello_token((ui->lineEdit_2->text()).toStdString());
-                std::string response = endpoint.send_blocking(
-                    "set_trello_token " + std::to_string(user.get_user_id()) +
-                    " " + user.get_trello_token());
-                // TODO check if message is sent
-                assert(response != "FAIL");
-                ui->lineEdit_2->setText("");
-                hide();
-                messWindow = new MainWindow();
-                messWindow->show();
-                this->close();
-            });
+    connect(ui->TokenButton, &QPushButton::clicked, [this, trello]() mutable {
+        user.set_trello_token((ui->lineEdit_2->text()).toStdString());
+        // TODO
+        std::string response = endpoint.send_blocking(
+            "set_trello_token " + std::to_string(user.get_user_id()) + " " +
+            user.get_trello_token());
+        ui->lineEdit_2->setText("");
+        hide();
+        messWindow = new MainWindow();
+        messWindow->show();
+        this->close();
+    });
 
     this->setFixedSize(400, 400);
 }
