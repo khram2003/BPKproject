@@ -14,13 +14,14 @@ class add_member : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit add_member(QWidget *parent = nullptr);
+    explicit add_member(QWidget *parent = nullptr, MainWindow *messWin=nullptr);
 
     ~add_member() override;
 
 private:
     Ui::add_member *ui;
     PopUp *up;
+    MainWindow *mess;
 };
 
 #endif  // ADD_MEMBER_H

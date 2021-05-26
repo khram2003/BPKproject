@@ -51,7 +51,7 @@ GoogleAuth::GoogleAuth(QObject *parent) : QObject(parent) {
     //    const auto clientSecret(settingsObject["client_secret"].toString());
     const auto clientSecret("NKhwrtNDtewe1dyswLVu-srR");
     //    const auto redirectUris = settingsObject["redirect_uris"].toArray();
-    const auto redirectUris = "http://127.0.0.1:9008/";
+    [[maybe_unused]] const auto redirectUris = "http://127.0.0.1:9008/";
     //    const QUrl redirectUri(redirectUris[0].toString());
     const QUrl redirectUri("http://127.0.0.1:9008/");
     const auto port = static_cast<quint16>(9008);

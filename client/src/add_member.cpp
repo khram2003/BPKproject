@@ -13,15 +13,14 @@
 
 using json = nlohmann::json;
 
-add_member::add_member(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::add_member) {
+add_member::add_member(QWidget *parent, MainWindow *messWin)
+    : QMainWindow(parent), ui(new Ui::add_member), mess(messWin) {
     ui->setupUi(this);
 
     connect(ui->AddButton, &QPushButton::clicked, [this] {
         std::string user_name = ui->lineEdit->text().toStdString();
-        //todo FIX
-        std::size_t chat_id = icon_to_name[ui->listWidget_2->item(current_chat)];
-        std::cerr << chat_id;
+        // todo FIX
+
         std::string user_exists;
         // TODO make pop up window
         user_exists = endpoint.send_blocking("find_user " + user_name);
@@ -33,7 +32,9 @@ add_member::add_member(QWidget *parent)
         } else {
             json j = json::parse(user_exists);
             std::string response;
-            response = endpoint.send_blocking("link_user_to_chat " + j["user_id"].dump() + " " /*+ todo chat_id*/);
+            response = endpoint.send_blocking(
+                "link_user_to_chat " + j["user_id"].dump() + " " +
+                std::to_string(mess->get_current_chat_id()));
             assert(response != "FAIL");
             hide();
             this->close();

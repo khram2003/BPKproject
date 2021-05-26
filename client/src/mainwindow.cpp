@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     num_of_chats = 0;
     update_chats_ui();
     update_messages(icon_to_chat_id[ui->listWidget_2->item(0)]);
+    current_chat_id = icon_to_chat_id[ui->listWidget_2->item(0)];
     ui->listWidget_2->setCurrentRow(current_chat);
     ui->label->setText(icon_to_name[ui->listWidget_2->item(current_chat)]);
 
@@ -71,8 +72,8 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(ui->memberButton, &QPushButton::clicked, [this] {
-      add_member *memberWindow = new add_member(nullptr);
-      memberWindow->show();
+        add_member *memberWindow = new add_member(nullptr, this);
+        memberWindow->show();
     });
 
     QTimer *timer = new QTimer(this);
@@ -141,6 +142,7 @@ void MainWindow::on_listWidget_2_itemClicked(QListWidgetItem *item) {
     ui->listWidget->clear();
     current_chat = ui->listWidget_2->currentRow();
     update_messages(icon_to_chat_id[item]);
+    current_chat_id = icon_to_chat_id[item];
     ui->label->setText(icon_to_name[ui->listWidget_2->item(current_chat)]);
 }
 
@@ -154,7 +156,7 @@ void MainWindow::update_chats_ui() {
         std::string chat_name = x["chat_name"];
         std::size_t chat_id = x["chat_id"];
         icon_to_chat_id[item] = chat_id;
-        icon_to_name[item]=QString::fromStdString(chat_name);
+        icon_to_name[item] = QString::fromStdString(chat_name);
         ChatView *row = new ChatView(QString::fromStdString(chat_name));
         ui->listWidget_2->setWordWrap(true);
         ui->listWidget_2->addItem(item);
@@ -163,4 +165,8 @@ void MainWindow::update_chats_ui() {
         item->setFont(QFont("Helvetica [Cronyx]", 12));
         item->setSizeHint(QSize(2, 52));
     }
+}
+
+std::size_t MainWindow::get_current_chat_id() {
+    return current_chat_id;
 }

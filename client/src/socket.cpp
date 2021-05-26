@@ -28,7 +28,7 @@ connection_metadata::connection_metadata(std::size_t id,
 }
 
 void connection_metadata::on_message(
-    websocketpp::connection_hdl hdl,
+    [[maybe_unused]] websocketpp::connection_hdl hdl,
     const websocketpp::config::asio_client::message_type::ptr &msg) {
     endpoint.p.set_value(msg->get_payload());
 }

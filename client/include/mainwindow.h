@@ -28,6 +28,8 @@ public:
 
     Ui::MainWindow *get_ui() const;
 
+    std::size_t get_current_chat_id();
+
     std::unordered_map<QListWidgetItem *, std::size_t> icon_to_chat_id;
     std::unordered_map<QListWidgetItem *, QString> icon_to_name;
 
@@ -49,6 +51,7 @@ private:
     int size_of_answer = 0;
     json chat_names;
     int current_chat = 0;
+    std::size_t current_chat_id;
 };
 
 #endif  // MAINWINDOW_H
