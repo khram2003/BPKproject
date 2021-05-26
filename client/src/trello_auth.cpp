@@ -1,6 +1,7 @@
 #include "trello_auth.h"
 #include <auth.h>
 #include <mainwindow.h>
+#include <popup.h>
 #include <socket.h>
 #include <trello.h>
 #include <ui_trello_auth.h>
@@ -28,16 +29,21 @@ trello_auth::trello_auth(QWidget *parent)
     });
 
     connect(ui->TokenButton, &QPushButton::clicked, [this, trello]() mutable {
-        user.set_trello_token((ui->lineEdit_2->text()).toStdString());
-        // TODO
-        std::string response = endpoint.send_blocking(
-            "set_trello_token " + std::to_string(user.get_user_id()) + " " +
-            user.get_trello_token());
-        ui->lineEdit_2->setText("");
-        hide();
-        messWindow = new MainWindow();
-        messWindow->show();
-        this->close();
+        if (ui->lineEdit_2->text().size() != 0) {
+            user.set_trello_token((ui->lineEdit_2->text()).toStdString());
+            std::string response = endpoint.send_blocking(
+                "set_trello_token " + std::to_string(user.get_user_id()) + " " +
+                user.get_trello_token());
+            ui->lineEdit_2->setText("");
+            hide();
+            messWindow = new MainWindow();
+            messWindow->show();
+            this->close();
+        } else {
+            up = new PopUp();
+            up->setPopupText("Trello token field should not be empty.");
+            up->show();
+        }
     });
 
     this->setFixedSize(400, 400);

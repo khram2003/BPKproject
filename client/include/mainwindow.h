@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <popup.h>
 #include <QListWidgetItem>
 #include <QMainWindow>
 #include <QStringListModel>
@@ -47,11 +48,12 @@ signals:
 
 private:
     Ui::MainWindow *ui;
-    int num_of_chats = 0;
-    int size_of_answer = 0;
+    std::size_t num_of_chats = 0;
+    std::size_t size_of_answer = 0;
     json chat_names;
-    int current_chat = 0;
+    std::size_t current_chat = 0;
     std::size_t current_chat_id;
+    PopUp *up;
 };
 
 #endif  // MAINWINDOW_H

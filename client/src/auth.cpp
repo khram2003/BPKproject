@@ -1,11 +1,11 @@
 #include <auth.h>
 #include <auth_google.h>
 #include <mainwindow.h>
+#include <popup.h>
 #include <socket.h>
 #include <trello.h>
 #include <ui_auth.h>
 #include <user.h>
-#include <popup.h>
 #include <QDesktopServices>
 #include <QUrl>
 #include <nlohmann/json.hpp>

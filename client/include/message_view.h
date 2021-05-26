@@ -5,7 +5,6 @@
 #include <QWidget>
 
 class MessageViewOut : public QWidget {
-    // This class can be easily improved
 public:
     [[maybe_unused]] MessageViewOut(const QString &msg);
 };

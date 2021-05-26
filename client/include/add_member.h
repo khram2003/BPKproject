@@ -14,7 +14,8 @@ class add_member : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit add_member(QWidget *parent = nullptr, MainWindow *messWin=nullptr);
+    explicit add_member(QWidget *parent = nullptr,
+                        MainWindow *messWin = nullptr);
 
     ~add_member() override;
 

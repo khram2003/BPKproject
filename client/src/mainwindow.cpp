@@ -58,6 +58,12 @@ MainWindow::MainWindow(QWidget *parent)
                 ui->textEdit->toPlainText().toStdString());
             // TODO check if message is sent
             assert(response != "FAIL");
+            if (response == "FAIL") {
+                up = new PopUp();
+                up->setPopupText(
+                    "Oops! Something went wrong... Don't worry that's on us.");
+                up->show();
+            }
             ui->textEdit->setPlainText("");
         }
     });
@@ -82,7 +88,6 @@ MainWindow::MainWindow(QWidget *parent)
         if (num_of_chats != size_of_answer) {
             update_chats_ui();
             num_of_chats = ui->listWidget_2->count();
-            // todo
             ui->listWidget_2->setCurrentRow(current_chat);
         }
     });
@@ -99,6 +104,12 @@ void MainWindow::update_chats() {
         "get_chat_list " + std::to_string(user.get_user_id()));
     // todo check if some problems occurred
     assert(response != "FAIL");
+    if (response == "FAIL") {
+        up = new PopUp();
+        up->setPopupText(
+            "Oops! Something went wrong... Don't worry that's on us.");
+        up->show();
+    }
     chat_ids = json::parse(response);
 
     for (auto x : chat_ids) {
@@ -106,6 +117,12 @@ void MainWindow::update_chats() {
             endpoint.send_blocking("get_chat_name " + x["chat_id"].dump());
         // todo check fail
         assert(response != "FAIL");
+        if (response == "FAIL") {
+            up = new PopUp();
+            up->setPopupText(
+                "Oops! Something went wrong... Don't worry that's on us.");
+            up->show();
+        }
         chat_names.push_back(json::parse(response));
     }
 
@@ -116,6 +133,12 @@ void MainWindow::update_messages(std::size_t chat_id) {
         endpoint.send_blocking("get_chat_history " + std::to_string(chat_id));
     // todo check fail
     assert(response != "FAIL");
+    if (response == "FAIL") {
+        up = new PopUp();
+        up->setPopupText(
+            "Oops! Something went wrong... Don't worry that's on us.");
+        up->show();
+    }
     json messages = json::parse(response);
 
     for (auto mess : messages) {

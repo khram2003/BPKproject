@@ -32,12 +32,24 @@ add_chat::add_chat(QWidget *parent, MainWindow *messWin)
                 endpoint.send_blocking("get_chat_id " + chat_name);
             // todo check fail
             assert(response != "FAIL");
+            if (response == "FAIL") {
+                up = new PopUp();
+                up->setPopupText(
+                    "Oops! Something went wrong... Don't worry that's on us.");
+                up->show();
+            }
             json j = json::parse(response);
             response = endpoint.send_blocking(
                 "link_user_to_chat " + std::to_string(user.get_user_id()) +
                 " " + j["chat_id"].dump());
             // todo check fail
             assert(response != "FAIL");
+            if (response == "FAIL") {
+                up = new PopUp();
+                up->setPopupText(
+                    "Oops! Something went wrong... Don't worry that's on us.");
+                up->show();
+            }
             mess->get_ui()->listWidget_2->clear();
             mess->update_chats();
             hide();

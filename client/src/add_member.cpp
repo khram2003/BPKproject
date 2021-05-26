@@ -19,10 +19,7 @@ add_member::add_member(QWidget *parent, MainWindow *messWin)
 
     connect(ui->AddButton, &QPushButton::clicked, [this] {
         std::string user_name = ui->lineEdit->text().toStdString();
-        // todo FIX
-
         std::string user_exists;
-        // TODO make pop up window
         user_exists = endpoint.send_blocking("find_user " + user_name);
         if (user_exists == "User not found") {
             up = new PopUp();
@@ -36,6 +33,12 @@ add_member::add_member(QWidget *parent, MainWindow *messWin)
                 "link_user_to_chat " + j["user_id"].dump() + " " +
                 std::to_string(mess->get_current_chat_id()));
             assert(response != "FAIL");
+            if (response == "FAIL") {
+                up = new PopUp();
+                up->setPopupText(
+                    "Oops! Something went wrong... Don't worry that's on us.");
+                up->show();
+            }
             hide();
             this->close();
         }
