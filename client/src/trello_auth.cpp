@@ -32,12 +32,11 @@ trello_auth::trello_auth(QWidget *parent)
     connect(ui->TokenButton, &QPushButton::clicked,
             [this, trello, new_user]() mutable {
                 user.set_trello_token((ui->lineEdit_2->text()).toStdString());
-                // TODO
-                if (new_user) {
-                    endpoint.send("set_trello_token " +
-                                  std::to_string(user.get_user_id()) + " " +
-                                  user.get_trello_token());
-                }
+                std::string response = endpoint.send_blocking(
+                    "set_trello_token " + std::to_string(user.get_user_id()) +
+                    " " + user.get_trello_token());
+                // TODO check if message is sent
+                assert(response != "FAIL");
                 ui->lineEdit_2->setText("");
                 hide();
                 messWindow = new MainWindow();

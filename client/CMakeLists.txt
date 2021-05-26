@@ -28,24 +28,26 @@ set(SOURCES
         src/mainwindow.cpp
         src/chat_view.cpp
         src/message_view.cpp
-        #src/authtest.cpp
         src/auth.cpp
         src/socket.cpp
         src/user.cpp
         src/add_chat.cpp
         src/trello.cpp
+        src/trello_auth.cpp
+        src/popup.cpp
+        src/auth_google.cpp
 
         include/mainwindow.h
         include/chat_view.h
         include/message_view.h
-        #include/authtest.h
         include/auth.h
         include/socket.h
         include/user.h
         include/add_chat.h
         include/trello.h
-        src/trello_auth.cpp include/trello_auth.h src/popup.cpp include/popup.h
-        src/auth_google.cpp include/auth_google.h)
+        include/trello_auth.h
+        include/popup.h
+        include/auth_google.h)
 
 set(NETWORKING_LIBS)
 if (WIN32 AND NOT MSVC AND NOT BORLAND)

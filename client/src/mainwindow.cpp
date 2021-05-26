@@ -46,14 +46,12 @@ MainWindow::MainWindow(QWidget *parent)
             ui->listWidget->setItemWidget(item, row);
             item->setSizeHint(row->sizeHint());
             item->setFont(QFont("Helvetica [Cronyx]", 12));
-            // TODO .send(add_message)
-            endpoint.p = std::promise<std::string>();
             std::size_t chat_id =
                 icon_to_chat_id[ui->listWidget_2->item(current_chat)];
-            endpoint.send("add_message " + std::to_string(chat_id) + " " +
-                          std::to_string(user.get_user_id()) + " " +
-                          ui->textEdit->toPlainText().toStdString());
-            std::string response = endpoint.update_future();
+            std::string response = endpoint.send_blocking(
+                "add_message " + std::to_string(chat_id) + " " +
+                std::to_string(user.get_user_id()) + " " +
+                ui->textEdit->toPlainText().toStdString());
             // TODO check if message is sent
             assert(response != "FAIL");
             ui->textEdit->setPlainText("");
@@ -87,20 +85,16 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::update_chats() {
     json chat_ids;
-    //    json chat_names;
     chat_names.clear();
-    // Getting all of the chats
-    endpoint.p = std::promise<std::string>();
-    endpoint.send("get_chat_list " + std::to_string(user.get_user_id()));
-    std::string response = endpoint.update_future();
+    std::string response = endpoint.send_blocking(
+        "get_chat_list " + std::to_string(user.get_user_id()));
     // todo check if some problems occurred
     assert(response != "FAIL");
     chat_ids = json::parse(response);
 
     for (auto x : chat_ids) {
-        endpoint.p = std::promise<std::string>();
-        endpoint.send("get_chat_name " + x["chat_id"].dump());
-        response = endpoint.update_future();
+        response =
+            endpoint.send_blocking("get_chat_name " + x["chat_id"].dump());
         // todo check fail
         assert(response != "FAIL");
         chat_names.push_back(json::parse(response));
@@ -109,9 +103,8 @@ void MainWindow::update_chats() {
     size_of_answer = chat_names.size();
 }
 void MainWindow::update_messages(std::size_t chat_id) {
-    endpoint.p = std::promise<std::string>();
-    endpoint.send("get_chat_history " + std::to_string(chat_id));
-    std::string response = endpoint.update_future();
+    std::string response =
+        endpoint.send_blocking("get_chat_history " + std::to_string(chat_id));
     // todo check fail
     assert(response != "FAIL");
     json messages = json::parse(response);
@@ -120,7 +113,6 @@ void MainWindow::update_messages(std::size_t chat_id) {
         ui->textEdit->setWordWrapMode(
             QTextOption::WrapAtWordBoundaryOrAnywhere);
         QListWidgetItem *item = new QListWidgetItem;
-        //         std::cerr << mess["message_text"].dump() << std::endl;
         MessageViewIn *row = new MessageViewIn(
             QString::fromStdString(mess["message_text"].get<std::string>()));
         row->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
