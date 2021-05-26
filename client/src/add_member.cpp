@@ -18,31 +18,23 @@ add_member::add_member(QWidget *parent)
     ui->setupUi(this);
 
     connect(ui->AddButton, &QPushButton::clicked, [this] {
-        std::string name = ui->lineEdit->text().toStdString();
+        std::string user_name = ui->lineEdit->text().toStdString();
+        //todo FIX
+        std::size_t chat_id = icon_to_name[ui->listWidget_2->item(current_chat)];
+        std::cerr << chat_id;
         std::string user_exists;
         // TODO make pop up window
-        user_exists = endpoint.send_blocking("find_user " + name);
-        if (user_exists != "User not found") {
+        user_exists = endpoint.send_blocking("find_user " + user_name);
+        if (user_exists == "User not found") {
             up = new PopUp();
             ui->lineEdit->clear();
             up->setPopupText("There is no such user.");
             up->show();
-
         } else {
-            // TODO sasha
-            //          endpoint.p = std::promise<std::string>();
-            //          endpoint.send("find_user " + name);
-            //          std::string response = endpoint.update_future();
-            //          // todo check fail
-            //          assert(response != "FAIL");
-            //          json j = json::parse(response);
-            //          endpoint.p = std::promise<std::string>();
-            //          endpoint.send("link_user_to_chat " +
-            //                        j["user_id"].dump() + " " +
-            //                        ;
-            //          response = endpoint.update_future();
-            //          // todo check fail
-            //          assert(response != "FAIL");
+            json j = json::parse(user_exists);
+            std::string response;
+            response = endpoint.send_blocking("link_user_to_chat " + j["user_id"].dump() + " " /*+ todo chat_id*/);
+            assert(response != "FAIL");
             hide();
             this->close();
         }

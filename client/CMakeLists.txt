@@ -6,6 +6,7 @@ project(BPK VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 
 find_package(Qt6Core REQUIRED)
 find_package(Qt6Widgets REQUIRED)
