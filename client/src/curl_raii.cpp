@@ -1,6 +1,5 @@
 #include <curl/curl.h>
 #include <curl_raii.h>
-#include <errors.h>
 #include <sstream>
 #include <string>
 
