@@ -8,6 +8,7 @@ private:
     std::string username;
     std::string trello_token;
     std::string google_token;
+    std::string trello_user_id;
     std::size_t user_id;
 
 public:
@@ -24,6 +25,8 @@ public:
     void set_trello_token(const std::string &token);
 
     void set_google_token(const std::string &token);
+
+    std::string get_trello_user_id();
 
     [[nodiscard]] std::string get_trello_token() const;
 

@@ -32,3 +32,7 @@ std::string User::get_trello_token() const {
 std::string User::get_google_token() const {
     return google_token;
 }
+
+std::string User::get_trello_user_id() {
+    return trello_user_id;
+}

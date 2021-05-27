@@ -93,13 +93,13 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    timer_chat->start(60);
+    timer_chat->start(600);
 
     QTimer *timer_message = new QTimer(this);
     connect(timer_message, &QTimer::timeout,
             [this] { update_messages(current_chat_id); });
 
-    timer_message->start(60);
+    timer_message->start(600);
 }
 
 void MainWindow::update_chats() {

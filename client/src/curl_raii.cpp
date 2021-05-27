@@ -66,8 +66,11 @@ void curl::save(std::ostream &output) {
     }
 }
 
+
+
 curl::~curl() {
     curl_easy_cleanup(curl_handle);
 }
+
 
 }  // namespace curl_raii
