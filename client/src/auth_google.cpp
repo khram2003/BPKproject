@@ -23,25 +23,32 @@ void GoogleAuth::work() {
     connect(&google, &QOAuth2AuthorizationCodeFlow::authorizeWithBrowser,
             &QDesktopServices::openUrl);
 
+    std::ifstream is("BPK_CLIENT_CONFIG.json");
+    if (!is) {
+        throw std::runtime_error(
+            "Couldn't open BPK_CLIENT_CONFIG, check if file exists\n");
+    }
+    json j = json::parse(is);
+    is.close();
+    json auth_info = j["google_authentification"];
     google.setAuthorizationUrl(
-        QUrl("https://accounts.google.com/o/oauth2/auth"));
-    google.setClientIdentifier(
-        "656689579627-iulsp1abjnrtd8hhui64i27qq5etgaej.apps.googleusercontent."
-        "com");
-    google.setAccessTokenUrl(QUrl("https://oauth2.googleapis.com/token"));
-    google.setClientIdentifierSharedKey("NKhwrtNDtewe1dyswLVu-srR");
+        QUrl(QString::fromStdString(auth_info["auth_uri"].get<std::string>())));
+    const auto client_id = auth_info["client_id"].get<std::string>();
+    google.setClientIdentifier(client_id.c_str());
+    google.setAccessTokenUrl(QUrl(
+        QString::fromStdString(auth_info["token_uri"].get<std::string>())));
+    const auto shared_key = auth_info["client_secret"].get<std::string>();
+    google.setClientIdentifierSharedKey(shared_key.c_str());
 
     google.setModifyParametersFunction(
         [](QAbstractOAuth::Stage stage,
            QMultiMap<QString, QVariant> *parameters) {
-            // Percent-decode the "code" parameter so Google can match it
             if (stage == QAbstractOAuth::Stage::RequestingAccessToken) {
                 QByteArray code = parameters->value("code").toByteArray();
                 parameters->remove("code");
                 parameters->insert("code", QUrl::fromPercentEncoding(code));
             }
         });
-
     auto replyHandler = new QOAuthHttpServerReplyHandler(10002, this);
     google.setReplyHandler(replyHandler);
     connect(&google, &QOAuth2AuthorizationCodeFlow::granted, [&google]() {

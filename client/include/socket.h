@@ -52,7 +52,7 @@ private:
     connection_metadata::ptr m_connection;
     std::promise<std::string> p;
 
-    const std::string uri = "ws://srv6.yeputons.net:9002";
+    std::string uri;
 
 public:
     websocket_endpoint();
