@@ -42,7 +42,8 @@ MainWindow::MainWindow(QWidget *parent)
             ui->textEdit->setWordWrapMode(
                 QTextOption::WrapAtWordBoundaryOrAnywhere);
             QListWidgetItem *item = new QListWidgetItem;
-            MessageViewOut *row = new MessageViewOut(ui->textEdit->toPlainText());
+            MessageViewOut *row =
+                new MessageViewOut(ui->textEdit->toPlainText());
             row->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
             ui->listWidget->setSizeAdjustPolicy(QListWidget::AdjustToContents);
             ui->listWidget->setWordWrap(true);
@@ -144,15 +145,32 @@ void MainWindow::update_messages(std::size_t chat_id) {
             ui->textEdit->setWordWrapMode(
                 QTextOption::WrapAtWordBoundaryOrAnywhere);
             QListWidgetItem *item = new QListWidgetItem;
-            MessageViewIn *row = new MessageViewIn(QString::fromStdString(
-                mess["message_text"].get<std::string>()));
-            row->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-            ui->listWidget->setSizeAdjustPolicy(QListWidget::AdjustToContents);
-            ui->listWidget->setWordWrap(true);
-            ui->listWidget->addItem(item);
-            ui->listWidget->setItemWidget(item, row);
-            item->setSizeHint(row->sizeHint());
-            item->setFont(QFont("Helvetica [Cronyx]", 12));
+            std::size_t sender_id = mess["sender_id"];
+            if (sender_id == user.get_user_id()) {
+                MessageViewOut *row = new MessageViewOut(QString::fromStdString(
+                    mess["message_text"].get<std::string>()));
+                row->setSizePolicy(QSizePolicy::Preferred,
+                                   QSizePolicy::Preferred);
+                ui->listWidget->setSizeAdjustPolicy(
+                    QListWidget::AdjustToContents);
+                ui->listWidget->setWordWrap(true);
+                ui->listWidget->addItem(item);
+                ui->listWidget->setItemWidget(item, row);
+                item->setSizeHint(row->sizeHint());
+                item->setFont(QFont("Helvetica [Cronyx]", 12));
+            } else {
+                MessageViewIn *row = new MessageViewIn(QString::fromStdString(
+                    mess["message_text"].get<std::string>()));
+                row->setSizePolicy(QSizePolicy::Preferred,
+                                   QSizePolicy::Preferred);
+                ui->listWidget->setSizeAdjustPolicy(
+                    QListWidget::AdjustToContents);
+                ui->listWidget->setWordWrap(true);
+                ui->listWidget->addItem(item);
+                ui->listWidget->setItemWidget(item, row);
+                item->setSizeHint(row->sizeHint());
+                item->setFont(QFont("Helvetica [Cronyx]", 12));
+            }
         }
         ui->listWidget->scrollToBottom();
         current_chat_messages_size = messages.size();
