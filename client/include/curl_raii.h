@@ -25,7 +25,7 @@ public:
     void switch_verbose(long type);
 
     void set_progress(long type);
-    
+
 
     static void check_error(const CURLcode &res);
 

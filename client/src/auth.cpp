@@ -15,13 +15,12 @@ using json = nlohmann::json;
 auth::auth(QWidget *parent) : QMainWindow(parent), ui(new Ui::auth) {
     ui->setupUi(this);
 
-    Trello trello;
+//    Trello trello;
 
     bool new_user = false;
 
     connect(ui->AuthButton, &QPushButton::clicked, [this, new_user]() mutable {
         if ((ui->lineEdit->text()).size() != 0) {
-            // TODO FIX LOGIC IN THIS METHOD ASAP
             user = User(ui->lineEdit->text().toStdString());
 //            GoogleAuth auth{};
 //            auth.work();

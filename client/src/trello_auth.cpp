@@ -40,8 +40,9 @@ trello_auth::trello_auth(QWidget *parent)
     //                  trello.get_api_key() + "&token=" +
     //                  QString::fromUtf8(user.get_trello_token().c_str());
 
-    connect(ui->TokenButton, SIGNAL(clicked(QPushButton *)), this,
-            SLOT(trelloButtonClicked()));
+
+    connect(ui->TokenButton, &QPushButton::clicked, this,
+            &trello_auth::trelloButtonClicked);
 
     this->setFixedSize(400, 400);
 }
@@ -50,12 +51,14 @@ trello_auth::~trello_auth() {
     delete ui;
 }
 
+
 void trello_auth::trelloButtonClicked() {
     if (ui->lineEdit_2->text().size() != 0) {
         user.set_trello_token((ui->lineEdit_2->text()).toStdString());
         std::string response = endpoint.send_blocking(
             "set_trello_token " + std::to_string(user.get_user_id()) + " " +
             user.get_trello_token());
+
         std::string req =
             "https://api.trello.com/1/tokens/"
             "a02b84e322522fd57e1b295598cf6686802e0619af292dccfec6016b5e0d6911/"
