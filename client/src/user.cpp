@@ -21,6 +21,14 @@ void User::set_trello_token(const std::string &token) {
     trello_token = token;
 }
 
+void User::set_google_token(const std::string &token) {
+    google_token = token;
+}
+
 std::string User::get_trello_token() const {
     return trello_token;
+}
+
+std::string User::get_google_token() const {
+    return google_token;
 }
