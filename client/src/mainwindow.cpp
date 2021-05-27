@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
             ui->textEdit->setWordWrapMode(
                 QTextOption::WrapAtWordBoundaryOrAnywhere);
             QListWidgetItem *item = new QListWidgetItem;
-            MessageViewIn *row = new MessageViewIn(ui->textEdit->toPlainText());
+            MessageViewOut *row = new MessageViewOut(ui->textEdit->toPlainText());
             row->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
             ui->listWidget->setSizeAdjustPolicy(QListWidget::AdjustToContents);
             ui->listWidget->setWordWrap(true);

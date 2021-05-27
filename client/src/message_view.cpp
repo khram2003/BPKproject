@@ -5,7 +5,7 @@
 #include <QString>
 #include <QWidget>
 
-[[maybe_unused]] MessageViewOut::MessageViewOut(const QString &msg) {
+[[maybe_unused]] MessageViewIn::MessageViewIn(const QString &msg) {
     QHBoxLayout *row = new QHBoxLayout();
     QLabel *lbl = new QLabel;
     lbl->setStyleSheet(
@@ -20,7 +20,7 @@
     setLayout(row);
 }
 
-MessageViewIn::MessageViewIn(const QString &msg) {
+MessageViewOut::MessageViewOut(const QString &msg) {
     QHBoxLayout *row = new QHBoxLayout();
     QLabel *lbl = new QLabel;
     QLabel *lblim = new QLabel;
@@ -29,7 +29,7 @@ MessageViewIn::MessageViewIn(const QString &msg) {
     lblim->setPixmap(pm);
     lblim->setScaledContents(true);
     lbl->setStyleSheet(
-        "QLabel { background-color : #353535; color : white; border-width: "
+        "QLabel { background-color : blue; color : white; border-width: "
         "2px; border-radius: 10px; padding: 6px;}");
     QSizePolicy spLeft(QSizePolicy::Minimum, QSizePolicy::Expanding);
     spLeft.setVerticalStretch(1);
@@ -37,7 +37,7 @@ MessageViewIn::MessageViewIn(const QString &msg) {
     lbl->setWordWrap(true);
     lbl->setText(msg);
     lbl->adjustSize();
-    lblim->setStyleSheet("QLabel { border-radius: 10px}");
+    lblim->setStyleSheet("QLabel { border-radius: 10px, background-color : blue}");
     lblim->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     lblim->setAlignment(Qt::AlignBottom);
     row->addWidget(lblim);
