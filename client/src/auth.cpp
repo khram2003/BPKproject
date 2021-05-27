@@ -22,9 +22,9 @@ auth::auth(QWidget *parent) : QMainWindow(parent), ui(new Ui::auth) {
     connect(ui->AuthButton, &QPushButton::clicked, [this, new_user]() mutable {
         if ((ui->lineEdit->text()).size() != 0) {
             // TODO FIX LOGIC IN THIS METHOD ASAP
+            user = User(ui->lineEdit->text().toStdString());
             GoogleAuth auth{};
             auth.work();
-            user = User(ui->lineEdit->text().toStdString());
             std::string response =
                 endpoint.send_blocking("find_user " + user.get_username());
             assert(response != "FAIL");

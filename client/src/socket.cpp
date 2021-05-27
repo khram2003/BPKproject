@@ -1,4 +1,7 @@
 #include <socket.h>
+#include <fstream>
+#include <iostream>
+#include <nlohmann/json.hpp>
 #include <utility>
 #include <websocketpp/client.hpp>
 #include <websocketpp/common/memory.hpp>
@@ -7,6 +10,8 @@
 #include <websocketpp/roles/client_endpoint.hpp>
 
 websocket_endpoint endpoint;
+
+using json = nlohmann::json;
 
 using websocketpp::connection_hdl;
 
@@ -64,6 +69,17 @@ std::string connection_metadata::get_status() const {
 }
 
 websocket_endpoint::websocket_endpoint() {
+    std::ifstream is("BPK_CLIENT_CONFIG.json");
+    if (!is) {
+        throw std::runtime_error(
+            "Couldn't open BPK_CLIENT_CONFIG, check if file exists\n");
+    }
+    json j = json::parse(is);
+
+    is.close();
+
+    uri = j["websocket"].get<std::string>();
+
     m_endpoint.clear_access_channels(websocketpp::log::alevel::all);
     m_endpoint.clear_error_channels(websocketpp::log::elevel::all);
 

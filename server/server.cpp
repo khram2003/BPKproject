@@ -429,8 +429,14 @@ void on_message(server *s,
 
 int main() {
     try {
-        Database database(pqxx::connection(
-            "user=postgres password=12345"));  //пока подключение к localhost
+        std::ifstream is("BPK_SERVER_CONFIG.json");
+        if (!is) {
+            std::cerr << "Couldn't open BPK_SERVER_CONFIG, check if file exists"
+                      << std::endl;
+        }
+        json j = json::parse(is);
+        is.close();
+        Database database(pqxx::connection(j["database"].get<std::string>()));
         if (!server_error_log) {
             std::cerr
                 << error

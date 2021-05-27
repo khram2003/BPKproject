@@ -3,16 +3,14 @@
 
 #include <user.h>
 #include <QString>
-#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
 
 class Trello {
-    // DO NOT CHANGE NEXT LINE. ONLY khram CAN!
-    const QString API_KEY = "56ed854395b292ea83d60e4c393a1417";
+    QString API_KEY;
 
 public:
-    Trello() = default;
+    Trello();
 
     ~Trello() = default;
 
