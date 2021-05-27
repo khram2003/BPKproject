@@ -62,7 +62,9 @@ MainWindow::MainWindow(QWidget *parent)
                     "Oops! Something went wrong... Don't worry that's on us.");
                 up->show();
             }
+            current_chat_messages_size++;
             ui->textEdit->setPlainText("");
+            ui->listWidget->scrollToBottom();
         }
     });
 
@@ -80,8 +82,8 @@ MainWindow::MainWindow(QWidget *parent)
         memberWindow->show();
     });
 
-    QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, [this] {
+    QTimer *timer_chat = new QTimer(this);
+    connect(timer_chat, &QTimer::timeout, [this] {
         update_chats();
         if (num_of_chats != size_of_answer) {
             update_chats_ui();
@@ -90,9 +92,13 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    timer->start(2000);
+    timer_chat->start(60);
 
-    this->setFixedSize(1000, 600);
+    QTimer *timer_message = new QTimer(this);
+    connect(timer_message, &QTimer::timeout,
+            [this] { update_messages(current_chat_id); });
+
+    timer_message->start(60);
 }
 
 void MainWindow::update_chats() {
@@ -132,20 +138,24 @@ void MainWindow::update_messages(std::size_t chat_id) {
         up->show();
     }
     json messages = json::parse(response);
-
-    for (auto mess : messages) {
-        ui->textEdit->setWordWrapMode(
-            QTextOption::WrapAtWordBoundaryOrAnywhere);
-        QListWidgetItem *item = new QListWidgetItem;
-        MessageViewIn *row = new MessageViewIn(
-            QString::fromStdString(mess["message_text"].get<std::string>()));
-        row->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-        ui->listWidget->setSizeAdjustPolicy(QListWidget::AdjustToContents);
-        ui->listWidget->setWordWrap(true);
-        ui->listWidget->addItem(item);
-        ui->listWidget->setItemWidget(item, row);
-        item->setSizeHint(row->sizeHint());
-        item->setFont(QFont("Helvetica [Cronyx]", 12));
+    if (current_chat_messages_size != messages.size()) {
+        ui->listWidget->clear();
+        for (auto mess : messages) {
+            ui->textEdit->setWordWrapMode(
+                QTextOption::WrapAtWordBoundaryOrAnywhere);
+            QListWidgetItem *item = new QListWidgetItem;
+            MessageViewIn *row = new MessageViewIn(QString::fromStdString(
+                mess["message_text"].get<std::string>()));
+            row->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+            ui->listWidget->setSizeAdjustPolicy(QListWidget::AdjustToContents);
+            ui->listWidget->setWordWrap(true);
+            ui->listWidget->addItem(item);
+            ui->listWidget->setItemWidget(item, row);
+            item->setSizeHint(row->sizeHint());
+            item->setFont(QFont("Helvetica [Cronyx]", 12));
+        }
+        ui->listWidget->scrollToBottom();
+        current_chat_messages_size = messages.size();
     }
 }
 
@@ -154,6 +164,7 @@ Ui::MainWindow *MainWindow::get_ui() const {
 }
 
 void MainWindow::on_listWidget_2_itemClicked(QListWidgetItem *item) {
+    current_chat_messages_size = 0;
     ui->listWidget->clear();
     current_chat = ui->listWidget_2->currentRow();
     update_messages(icon_to_chat_id[item]);
@@ -182,6 +193,6 @@ void MainWindow::update_chats_ui() {
     }
 }
 
-std::size_t MainWindow::get_current_chat_id() {
+std::size_t MainWindow::get_current_chat_id() const {
     return current_chat_id;
 }
