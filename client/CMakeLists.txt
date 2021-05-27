@@ -38,6 +38,7 @@ set(SOURCES
         src/popup.cpp
         src/auth_google.cpp
         src/add_member.cpp
+        src/curl_raii.cpp
 
         include/mainwindow.h
         include/chat_view.h
@@ -50,7 +51,8 @@ set(SOURCES
         include/trello_auth.h
         include/popup.h
         include/auth_google.h
-        include/add_member.h)
+        include/add_member.h
+        include/curl_raii.h)
 
 set(NETWORKING_LIBS)
 if (WIN32 AND NOT MSVC AND NOT BORLAND)
