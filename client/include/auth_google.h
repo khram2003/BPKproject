@@ -7,12 +7,8 @@
 class GoogleAuth : public QObject {
     Q_OBJECT
 public:
-    explicit GoogleAuth(QObject *parent = nullptr);
+    GoogleAuth() = default;
 
-signals:
-    void gotToken(const QString &token);
-
-private:
-    QOAuth2AuthorizationCodeFlow *google;
+    void work();
 };
 #endif  // AUTH_GOOGLE_H
