@@ -19,20 +19,15 @@ public:
     explicit PopUp(QWidget *parent = 0);
 
 protected:
-    void paintEvent(QPaintEvent *event);  // The background will be drawn
-                                          // through the redraw method
+    void paintEvent(QPaintEvent *event);
 
 public slots:
-    void setPopupText(const QString &text);  // Setting text notification
-    void show();                             /* own widget displaying method
-                                              * It is necessary to pre-animation settings
-                                              * */
+    void setPopupText(const QString &text);
+    void show();
 
 private slots:
-    void hideAnimation();  // Slot start the animation hide
-    void hide(); /* At the end of the animation, it is checked in a given slot,
-                  * Does the widget visible, or to hide
-                  * */
+    void hideAnimation();
+    void hide();
 
 private:
     QLabel label;

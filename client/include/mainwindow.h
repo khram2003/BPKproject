@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <popup.h>
 #include <QListWidgetItem>
 #include <QMainWindow>
 #include <QStringListModel>
@@ -26,9 +27,14 @@ public:
 
     void update_chats_ui();
 
+    void update_messages_ui();
+
     Ui::MainWindow *get_ui() const;
 
+    std::size_t get_current_chat_id() const;
+
     std::unordered_map<QListWidgetItem *, std::size_t> icon_to_chat_id;
+    std::unordered_map<QListWidgetItem *, QString> icon_to_name;
 
 signals:
 
@@ -44,10 +50,13 @@ signals:
 
 private:
     Ui::MainWindow *ui;
-    int num_of_chats = 0;
-    int size_of_answer = 0;
+    std::size_t num_of_chats = 0;
+    std::size_t size_of_answer = 0;
     json chat_names;
-    int current_chat = 0;
+    std::size_t current_chat = 0;
+    std::size_t current_chat_id;
+    PopUp *up;
+    std::size_t current_chat_messages_size = 0;
 };
 
 #endif  // MAINWINDOW_H

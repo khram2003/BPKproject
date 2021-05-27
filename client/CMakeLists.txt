@@ -6,6 +6,7 @@ project(BPK VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
 
 find_package(Qt6Core REQUIRED)
 find_package(Qt6Widgets REQUIRED)
@@ -20,7 +21,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(RESOURCE resources.qrc)
-set(UI mainwindow.ui auth.ui add_chat.ui trello_auth.ui)
+set(UI mainwindow.ui auth.ui add_chat.ui trello_auth.ui add_member.ui)
 qt6_wrap_ui(UI_HEADERS ${UI})
 
 set(SOURCES
@@ -33,6 +34,10 @@ set(SOURCES
         src/user.cpp
         src/add_chat.cpp
         src/trello.cpp
+        src/trello_auth.cpp
+        src/popup.cpp
+        src/auth_google.cpp
+        src/add_member.cpp
 
         include/mainwindow.h
         include/chat_view.h
@@ -42,8 +47,10 @@ set(SOURCES
         include/user.h
         include/add_chat.h
         include/trello.h
-        src/trello_auth.cpp include/trello_auth.h src/popup.cpp include/popup.h
-)
+        include/trello_auth.h
+        include/popup.h
+        include/auth_google.h
+        include/add_member.h)
 
 set(NETWORKING_LIBS)
 if (WIN32 AND NOT MSVC AND NOT BORLAND)

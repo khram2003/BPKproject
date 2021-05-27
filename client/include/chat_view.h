@@ -1,6 +1,7 @@
 #ifndef CHAT_VIEW_H
 #define CHAT_VIEW_H
 
+#include <QLabel>
 #include <QString>
 #include <QWidget>
 

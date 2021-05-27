@@ -50,21 +50,26 @@ private:
     websocketpp::lib::shared_ptr<websocketpp::lib::thread> m_thread;
 
     connection_metadata::ptr m_connection;
-
-    const std::string uri = "ws://localhost:9002";
-
-public:
     std::promise<std::string> p;
 
+    const std::string uri = "ws://srv6.yeputons.net:9002";
+
+public:
     websocket_endpoint();
 
     void init_connection();
 
     void send(const std::string &message);
 
+    std::string send_blocking(const std::string &request);
+
     std::string update_future();
 
     ~websocket_endpoint();
+
+    friend void connection_metadata::on_message(
+        websocketpp::connection_hdl hdl,
+        const websocketpp::config::asio_client::message_type::ptr &msg);
 };
 
 extern websocket_endpoint endpoint;

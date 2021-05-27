@@ -28,7 +28,7 @@ connection_metadata::connection_metadata(std::size_t id,
 }
 
 void connection_metadata::on_message(
-    websocketpp::connection_hdl hdl,
+    [[maybe_unused]] websocketpp::connection_hdl hdl,
     const websocketpp::config::asio_client::message_type::ptr &msg) {
     endpoint.p.set_value(msg->get_payload());
 }
@@ -102,9 +102,16 @@ void websocket_endpoint::send(const std::string &message) {
     websocketpp::lib::error_code ec;
     m_endpoint.send(m_connection->get_hdl(), message,
                     websocketpp::frame::opcode::text, ec);
+
     if (ec) {
         return;
     }
+}
+
+std::string websocket_endpoint::send_blocking(const std::string &request) {
+    p = std::promise<std::string>();
+    send(request);
+    return update_future();
 }
 
 std::string websocket_endpoint::update_future() {

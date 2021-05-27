@@ -6,7 +6,7 @@
 #include <QWidget>
 
 ChatView::ChatView(const QString &name) {
-    auto *row = new QHBoxLayout();
+    auto *row = new QVBoxLayout();
     auto *lbl = new QLabel;
     lbl->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
     lbl->setWordWrap(true);
@@ -14,3 +14,4 @@ ChatView::ChatView(const QString &name) {
     row->addWidget(lbl);
     setLayout(row);
 }
+

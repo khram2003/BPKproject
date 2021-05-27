@@ -1,9 +1,11 @@
 #include <add_chat.h>
+#include <add_member.h>
 #include <chat_view.h>
 #include <mainwindow.h>
 #include <message_view.h>
 #include <popup.h>
 #include <socket.h>
+#include <ui_add_member.h>
 #include <ui_mainwindow.h>
 #include <user.h>
 #include <QBrush>
@@ -29,14 +31,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     update_chats();
     num_of_chats = 0;
+    update_chats_ui();
+    update_messages(icon_to_chat_id[ui->listWidget_2->item(0)]);
+    current_chat_id = icon_to_chat_id[ui->listWidget_2->item(0)];
     ui->listWidget_2->setCurrentRow(current_chat);
+    ui->label->setText(icon_to_name[ui->listWidget_2->item(current_chat)]);
 
     connect(ui->sendButton, &QPushButton::clicked, [this] {
         if ((ui->textEdit->toPlainText()).size() != 0) {
             ui->textEdit->setWordWrapMode(
                 QTextOption::WrapAtWordBoundaryOrAnywhere);
             QListWidgetItem *item = new QListWidgetItem;
-            MessageViewIn *row = new MessageViewIn(ui->textEdit->toPlainText());
+            MessageViewOut *row =
+                new MessageViewOut(ui->textEdit->toPlainText());
             row->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
             ui->listWidget->setSizeAdjustPolicy(QListWidget::AdjustToContents);
             ui->listWidget->setWordWrap(true);
@@ -44,15 +51,21 @@ MainWindow::MainWindow(QWidget *parent)
             ui->listWidget->setItemWidget(item, row);
             item->setSizeHint(row->sizeHint());
             item->setFont(QFont("Helvetica [Cronyx]", 12));
-            // TODO .send(add_message)
-            endpoint.p = std::promise<std::string>();
-            endpoint.send("add_message 1 " +
-                          std::to_string(user.get_user_id()) + " " +
-                          ui->textEdit->toPlainText().toStdString());
-            std::string response = endpoint.update_future();
-            // TODO check if message is sent
-            assert(response != "FAIL");
+            std::size_t chat_id =
+                icon_to_chat_id[ui->listWidget_2->item(current_chat)];
+            std::string response = endpoint.send_blocking(
+                "add_message " + std::to_string(chat_id) + " " +
+                std::to_string(user.get_user_id()) + " " +
+                ui->textEdit->toPlainText().toStdString());
+            if (response == "FAIL") {
+                up = new PopUp();
+                up->setPopupText(
+                    "Oops! Something went wrong... Don't worry that's on us.");
+                up->show();
+            }
+            current_chat_messages_size++;
             ui->textEdit->setPlainText("");
+            ui->listWidget->scrollToBottom();
         }
     });
 
@@ -65,67 +78,102 @@ MainWindow::MainWindow(QWidget *parent)
         chooseWindow->show();
     });
 
-    QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, [this] {
+    connect(ui->memberButton, &QPushButton::clicked, [this] {
+        add_member *memberWindow = new add_member(nullptr, this);
+        memberWindow->show();
+    });
+
+    QTimer *timer_chat = new QTimer(this);
+    connect(timer_chat, &QTimer::timeout, [this] {
         update_chats();
         if (num_of_chats != size_of_answer) {
             update_chats_ui();
             num_of_chats = ui->listWidget_2->count();
-            // todo
             ui->listWidget_2->setCurrentRow(current_chat);
         }
     });
 
-    timer->start(2000);
+    timer_chat->start(60);
 
-    this->setFixedSize(1000, 600);
+    QTimer *timer_message = new QTimer(this);
+    connect(timer_message, &QTimer::timeout,
+            [this] { update_messages(current_chat_id); });
+
+    timer_message->start(60);
 }
 
 void MainWindow::update_chats() {
     json chat_ids;
-    //    json chat_names;
     chat_names.clear();
-    // Getting all of the chats
-    endpoint.p = std::promise<std::string>();
-    endpoint.send("get_chat_list " + std::to_string(user.get_user_id()));
-    std::string response = endpoint.update_future();
-    // todo check if some problems occurred
-    assert(response != "FAIL");
+    std::string response = endpoint.send_blocking(
+        "get_chat_list " + std::to_string(user.get_user_id()));
+    if (response == "FAIL") {
+        up = new PopUp();
+        up->setPopupText(
+            "Oops! Something went wrong... Don't worry that's on us.");
+        up->show();
+    }
     chat_ids = json::parse(response);
 
     for (auto x : chat_ids) {
-        endpoint.p = std::promise<std::string>();
-        endpoint.send("get_chat_name " + x["chat_id"].dump());
-        response = endpoint.update_future();
-        // todo check fail
-        assert(response != "FAIL");
+        response =
+            endpoint.send_blocking("get_chat_name " + x["chat_id"].dump());
+        if (response == "FAIL") {
+            up = new PopUp();
+            up->setPopupText(
+                "Oops! Something went wrong... Don't worry that's on us.");
+            up->show();
+        }
         chat_names.push_back(json::parse(response));
     }
 
     size_of_answer = chat_names.size();
 }
 void MainWindow::update_messages(std::size_t chat_id) {
-    endpoint.p = std::promise<std::string>();
-    endpoint.send("get_chat_history " + std::to_string(chat_id));
-    std::string response = endpoint.update_future();
-    // todo check fail
-    assert(response != "FAIL");
+    std::string response =
+        endpoint.send_blocking("get_chat_history " + std::to_string(chat_id));
+    if (response == "FAIL") {
+        up = new PopUp();
+        up->setPopupText(
+            "Oops! Something went wrong... Don't worry that's on us.");
+        up->show();
+    }
     json messages = json::parse(response);
-
-    for (auto mess : messages) {
-        ui->textEdit->setWordWrapMode(
-            QTextOption::WrapAtWordBoundaryOrAnywhere);
-        QListWidgetItem *item = new QListWidgetItem;
-        //         std::cerr << mess["message_text"].dump() << std::endl;
-        MessageViewIn *row = new MessageViewIn(
-            QString::fromStdString(mess["message_text"].get<std::string>()));
-        row->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-        ui->listWidget->setSizeAdjustPolicy(QListWidget::AdjustToContents);
-        ui->listWidget->setWordWrap(true);
-        ui->listWidget->addItem(item);
-        ui->listWidget->setItemWidget(item, row);
-        item->setSizeHint(row->sizeHint());
-        item->setFont(QFont("Helvetica [Cronyx]", 12));
+    if (current_chat_messages_size != messages.size()) {
+        ui->listWidget->clear();
+        for (auto mess : messages) {
+            ui->textEdit->setWordWrapMode(
+                QTextOption::WrapAtWordBoundaryOrAnywhere);
+            QListWidgetItem *item = new QListWidgetItem;
+            std::size_t sender_id = mess["sender_id"];
+            if (sender_id == user.get_user_id()) {
+                MessageViewOut *row = new MessageViewOut(QString::fromStdString(
+                    mess["message_text"].get<std::string>()));
+                row->setSizePolicy(QSizePolicy::Preferred,
+                                   QSizePolicy::Preferred);
+                ui->listWidget->setSizeAdjustPolicy(
+                    QListWidget::AdjustToContents);
+                ui->listWidget->setWordWrap(true);
+                ui->listWidget->addItem(item);
+                ui->listWidget->setItemWidget(item, row);
+                item->setSizeHint(row->sizeHint());
+                item->setFont(QFont("Helvetica [Cronyx]", 12));
+            } else {
+                MessageViewIn *row = new MessageViewIn(QString::fromStdString(
+                    mess["message_text"].get<std::string>()));
+                row->setSizePolicy(QSizePolicy::Preferred,
+                                   QSizePolicy::Preferred);
+                ui->listWidget->setSizeAdjustPolicy(
+                    QListWidget::AdjustToContents);
+                ui->listWidget->setWordWrap(true);
+                ui->listWidget->addItem(item);
+                ui->listWidget->setItemWidget(item, row);
+                item->setSizeHint(row->sizeHint());
+                item->setFont(QFont("Helvetica [Cronyx]", 12));
+            }
+        }
+        ui->listWidget->scrollToBottom();
+        current_chat_messages_size = messages.size();
     }
 }
 
@@ -134,9 +182,12 @@ Ui::MainWindow *MainWindow::get_ui() const {
 }
 
 void MainWindow::on_listWidget_2_itemClicked(QListWidgetItem *item) {
+    current_chat_messages_size = 0;
     ui->listWidget->clear();
     current_chat = ui->listWidget_2->currentRow();
     update_messages(icon_to_chat_id[item]);
+    current_chat_id = icon_to_chat_id[item];
+    ui->label->setText(icon_to_name[ui->listWidget_2->item(current_chat)]);
 }
 
 MainWindow::~MainWindow() {
@@ -149,6 +200,7 @@ void MainWindow::update_chats_ui() {
         std::string chat_name = x["chat_name"];
         std::size_t chat_id = x["chat_id"];
         icon_to_chat_id[item] = chat_id;
+        icon_to_name[item] = QString::fromStdString(chat_name);
         ChatView *row = new ChatView(QString::fromStdString(chat_name));
         ui->listWidget_2->setWordWrap(true);
         ui->listWidget_2->addItem(item);
@@ -157,4 +209,8 @@ void MainWindow::update_chats_ui() {
         item->setFont(QFont("Helvetica [Cronyx]", 12));
         item->setSizeHint(QSize(2, 52));
     }
+}
+
+std::size_t MainWindow::get_current_chat_id() const {
+    return current_chat_id;
 }
