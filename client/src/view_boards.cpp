@@ -96,7 +96,6 @@ void view_boards::on_listWidget_itemClicked(
     std::string req = "https://api.trello.com/1/tokens/" + user_trello_token +
                       "/member?key=" + trello.get_api_key().toStdString() +
                       "&token=" + user_trello_token;
-    //    std::cout << req << '\n';
     curl_raii::curl crl;
     crl.set_url(req);
     std::stringstream in;
@@ -111,29 +110,19 @@ void view_boards::on_listWidget_itemClicked(
 
           "&token=" + chatter_token + "&type=admin";
 
-    //    std::cout << req;
-    CURL *curl;
-    curl = curl_easy_init();
-    json json_struct;
-    if (curl != nullptr) {
-        curl_easy_setopt(curl, CURLOPT_URL, req.c_str());
-        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
-        curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-    }
-//    std::cout << icon_to_board_id[item] << '\n';
-//    std::cout << trello.get_api_key().toStdString() << '\n';
+    curl_raii::curl send_curl;
+    send_curl.set_url(req);
+    send_curl.upload_mode();
+    send_curl.send();
     req = "https://api.trello.com/1/boards/" + icon_to_board_id[item] +
-          "?key=" + trello.get_api_key().toStdString();
-    //    std::cout << req;
+          "?key=" + trello.get_api_key().toStdString() +
+          "&token=" + user_trello_token;
     crl.set_url(req);
     std::stringstream in1;
     crl.save(in1);
-    json_string = in1.str();
-    j = json::parse(json_string);
+    j = json::parse(in1.str());
 
     auto board_url = j["url"].get<std::string>();
-    //    std::cout<<board_url;
     QDesktopServices::openUrl(
         QUrl(QString::fromUtf8(board_url.c_str()), QUrl::TolerantMode));
 }

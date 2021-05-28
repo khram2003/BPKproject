@@ -26,7 +26,6 @@ public:
 
     void set_progress(long type);
 
-
     static void check_error(const CURLcode &res);
 
     static std::size_t write_data(void *ptr,
@@ -35,6 +34,10 @@ public:
                                   void *stream) noexcept;
 
     void save(std::ostream &output);
+
+    void upload_mode();
+
+    void send();
 
     ~curl();
 };

@@ -67,6 +67,16 @@ void curl::save(std::ostream &output) {
     }
 }
 
+void curl::upload_mode() {
+    auto res = curl_easy_setopt(curl_handle, CURLOPT_CUSTOMREQUEST, "PUT");
+    check_error(res);
+}
+
+void curl::send() {
+    auto res = curl_easy_perform(curl_handle);
+    check_error(res);
+}
+
 curl::~curl() {
     curl_easy_cleanup(curl_handle);
 }
