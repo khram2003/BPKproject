@@ -87,7 +87,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->listWidget_2, SIGNAL(itemClicked(QListWidgetItem *)),
             ui->listWidget,
-            SLOT(on_listWidget_2_itemClicked(QListWidgetItem *)));
+            SLOT(on_listWidget_2_itemClicked(QListWidgetItem * item)));
 
     connect(ui->AddChatButton, &QPushButton::clicked, [this] {
         add_chat *chooseWindow = new add_chat(nullptr, this);
@@ -100,8 +100,30 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(ui->viewBoardsButton, &QPushButton::clicked, [this] {
-        view_boards *viewBrdWindow = new view_boards(nullptr, this);
-        viewBrdWindow->show();
+        std::string response = endpoint.send_blocking(
+            "get_chat_members " + std::to_string(current_chat_id));
+        if (response == "FAIL") {
+            up = new PopUp();
+            up->setPopupText(
+                "Oops! Something went wrong... Don't worry that's on us.");
+            up->show();
+        }
+        json j = json::parse(response);
+        if (j.size() == 2) {
+            for (auto user_id : j) {
+                if (user_id["user_id"] != user.get_user_id()) {
+                    chatter = user_id["user_id"];
+                    break;
+                }
+            }
+
+            view_boards *viewBrdWindow = new view_boards(nullptr, this);
+            viewBrdWindow->show();
+        } else {
+            up = new PopUp();
+            up->setPopupText("Trello View is not available for group chats.");
+            up->show();
+        }
     });
 
     QTimer *timer_chat = new QTimer(this);
@@ -190,6 +212,7 @@ void MainWindow::update_messages(std::size_t chat_id) {
                     up->show();
                 }
                 json user_info = json::parse(response);
+
                 MessageViewIn *row = new MessageViewIn(QString::fromStdString(
                     user_info["user_name"].get<std::string>() + ": " +
                     mess["message_text"].get<std::string>()));
@@ -218,6 +241,7 @@ void MainWindow::on_listWidget_2_itemClicked(QListWidgetItem *item) {
     ui->listWidget->clear();
     current_chat = ui->listWidget_2->currentRow();
     update_messages(icon_to_chat_id[item]);
+
     current_chat_id = icon_to_chat_id[item];
     ui->label->setText(icon_to_name[ui->listWidget_2->item(current_chat)]);
 }

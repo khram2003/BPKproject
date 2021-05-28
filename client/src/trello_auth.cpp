@@ -25,18 +25,23 @@ trello_auth::trello_auth(QWidget *parent)
     ui->setupUi(this);
 
     this->setWindowTitle("Trello Authentifucation");
-    this->setStyleSheet(".QPushButton {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
+    this->setStyleSheet(
+        ".QPushButton {background-color : #191919;border-width: 2px; "
+        "border-radius: 10px; padding: 6px;}");
 
-    ui->lineEdit_2->setStyleSheet(".QLineEdit {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
-    ui->textBrowser->setStyleSheet(".QTextBrowser {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
-
+    ui->lineEdit_2->setStyleSheet(
+        ".QLineEdit {background-color : #191919;border-width: 2px; "
+        "border-radius: 10px; padding: 6px;}");
+    ui->textBrowser->setStyleSheet(
+        ".QTextBrowser {background-color : #191919;border-width: 2px; "
+        "border-radius: 10px; padding: 6px;}");
 
     connect(ui->TrelloButton, &QPushButton::clicked, [] {
         QString requ =
             "https://trello.com/1/"
             "authorize?expiration=never&name=MyPersonalToken&scope=read&"
             "response_type=token&key=" +
-            trello.get_api_key();
+            trello.get_api_key() + "&scope=read,write,account";
         QDesktopServices::openUrl(QUrl(requ, QUrl::TolerantMode));
     });
 
@@ -59,8 +64,7 @@ void trello_auth::trelloButtonClicked() {
 
         std::string req = "https://api.trello.com/1/tokens/" +
                           user.get_trello_token() +
-                          "/member?key=" +
-                          trello.get_api_key().toStdString() +
+                          "/member?key=" + trello.get_api_key().toStdString() +
                           "&token=" + user.get_trello_token();
         curl_raii::curl crl;
         crl.set_url(req);

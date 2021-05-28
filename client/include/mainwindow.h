@@ -37,6 +37,8 @@ public:
     std::unordered_map<QListWidgetItem *, std::size_t> icon_to_chat_id;
     std::unordered_map<QListWidgetItem *, QString> icon_to_name;
 
+    std::size_t chatter=0;
+
 signals:
 
     void authWin();
@@ -48,7 +50,6 @@ private slots:
 signals:
 
     void messWin();
-
 private:
     Ui::MainWindow *ui;
     std::size_t num_of_chats = 0;

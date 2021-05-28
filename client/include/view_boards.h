@@ -19,10 +19,19 @@ public:
 
     ~view_boards() override;
 
+    std::unordered_map<QListWidgetItem *, std::string> icon_to_board_id;
+
+private slots:
+
+    void on_listWidget_itemClicked(QListWidgetItem *item);
+
+
 private:
     Ui::view_boards *ui;
     PopUp *up;
     MainWindow *mess;
+    std::string chatter_token;
+    std::string chatter_id;
 };
 
 #endif  // VIEW_BOARDS_H
