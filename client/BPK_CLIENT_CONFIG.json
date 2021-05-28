@@ -1,0 +1,10 @@
+{
+	"websocket" : "ws://srv6.yeputons.net:9002",
+	"trello_api_key" : "56ed854395b292ea83d60e4c393a1417",
+	"google_authentification" : {
+		"client_id":"656689579627-iulsp1abjnrtd8hhui64i27qq5etgaej.apps.googleusercontent.com",
+		"auth_uri":"https://accounts.google.com/o/oauth2/auth",
+		"token_uri":"https://oauth2.googleapis.com/token",
+		"client_secret":"NKhwrtNDtewe1dyswLVu-srR"
+	}
+}

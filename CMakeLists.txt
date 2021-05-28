@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.13)
 project(BPKproject)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(BUILD_CLIENT "Build client" ON)
 
-find_package(PostgreSQL)
+find_package(PostgreSQL REQUIRED)
 
 set(LIBPQXX_VERSION "libpqxx-7.5.2")
 set(WEBSOCKETPP_VERSION "websocketpp-0.8.2")
