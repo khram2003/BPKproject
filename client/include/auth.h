@@ -2,6 +2,7 @@
 #define AUTH_H
 
 #include <mainwindow.h>
+#include <popup.h>
 #include <trello_auth.h>
 #include <QMainWindow>
 
@@ -21,6 +22,7 @@ private:
     Ui::auth *ui;
     MainWindow *messWindow;
     trello_auth *trelloWindow;
+    PopUp *up;
 };
 
 #endif  // AUTH_H

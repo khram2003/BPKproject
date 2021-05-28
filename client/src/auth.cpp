@@ -22,7 +22,12 @@ auth::auth(QWidget *parent) : QMainWindow(parent), ui(new Ui::auth) {
         auth.work();
         std::string response =
             endpoint.send_blocking("find_user " + user.get_username());
-        assert(response != "FAIL");
+        if (response == "FAIL") {
+            up = new PopUp();
+            up->setPopupText(
+                "Oops! Something went wrong... Don't worry that's on us.");
+            up->show();
+        }
         std::string user_exists = "FAIL";
         if (response == "User not found") {
             new_user = true;
@@ -39,15 +44,30 @@ auth::auth(QWidget *parent) : QMainWindow(parent), ui(new Ui::auth) {
             // Adding first chat
             std::string first_chat = user.get_username() + " notes";
             response = endpoint.send_blocking("add_chat " + first_chat);
-            // TODO check fails
-            assert(response != "FAIL");
+
+            if (response == "FAIL") {
+                up = new PopUp();
+                up->setPopupText(
+                    "Oops! Something went wrong... Don't worry that's on us.");
+                up->show();
+            }
             response = endpoint.send_blocking("get_chat_id " + first_chat);
-            assert(response != "FAIL");
+            if (response == "FAIL") {
+                up = new PopUp();
+                up->setPopupText(
+                    "Oops! Something went wrong... Don't worry that's on us.");
+                up->show();
+            }
             j = json::parse(response);
             endpoint.send_blocking("link_user_to_chat " +
                                    std::to_string(user.get_user_id()) + " " +
                                    j["chat_id"].dump());
-            assert(response != "FAIL");
+            if (response == "FAIL") {
+                up = new PopUp();
+                up->setPopupText(
+                    "Oops! Something went wrong... Don't worry that's on us.");
+                up->show();
+            }
 
             hide();
             trelloWindow = new trello_auth();

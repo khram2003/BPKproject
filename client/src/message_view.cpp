@@ -1,6 +1,8 @@
 #include <message_view.h>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QPainter>
+#include <QPainterPath>
 #include <QSizePolicy>
 #include <QString>
 #include <QWidget>
@@ -12,7 +14,12 @@
     QPixmap npm("Sprites/qwertyuiop.jpg");
     QPixmap pm = npm.scaled(QSize(50, 50));
     lblim->setPixmap(pm);
+    lblim->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    lblim->setFixedSize(50, 50);
+    QRegion *region =
+        new QRegion(0, 0, lblim->width(), lblim->height(), QRegion::Ellipse);
     lblim->setScaledContents(true);
+    lblim->setMask(*region);
     lbl->setStyleSheet(
         "QLabel { background-color : #353535; color : white; border-width: "
         "2px; border-radius: 10px; padding: 6px;}");
@@ -37,8 +44,14 @@ MessageViewOut::MessageViewOut(const QString &msg) {
     QLabel *lblim = new QLabel;
     QPixmap npm("Sprites/qwertyuiop.jpg");
     QPixmap pm = npm.scaled(QSize(50, 50));
+
     lblim->setPixmap(pm);
+    lblim->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    lblim->setFixedSize(50, 50);
+    QRegion *region =
+        new QRegion(0, 0, lblim->width(), lblim->height(), QRegion::Ellipse);
     lblim->setScaledContents(true);
+    lblim->setMask(*region);
     lbl->setStyleSheet(
         "QLabel { background-color : #003366; color : white; border-width: "
         "2px; border-radius: 10px; padding: 6px;}");
@@ -51,7 +64,6 @@ MessageViewOut::MessageViewOut(const QString &msg) {
     lbl->setAlignment(Qt::AlignRight);
     lblim->setStyleSheet(
         "QLabel { border-radius: 10px, background-color : #003366}");
-    lblim->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     lblim->setAlignment(Qt::AlignBottom);
     row->addWidget(lbl);
     row->addWidget(lblim);
