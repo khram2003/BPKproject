@@ -56,8 +56,6 @@ void User::download_userinfo() {
     std::stringstream in;
     curl.save(in);
     json j = json::parse(in.str());
-    std::cout << in.str() << std::endl;
-    std::cout << j["picture"].get<std::string>() << std::endl;
     user.set_username(j["name"].get<std::string>());
     download_avatar(j["picture"].get<std::string>());
 }

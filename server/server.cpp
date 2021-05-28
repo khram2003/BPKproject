@@ -320,6 +320,23 @@ public:
             return fail;
         }
     }
+
+    std::string get_user_name(std::size_t user_id) {
+        std::string query =
+            "SELECT user_id, user_name FROM Users WHERE user_id = '" +
+            std::to_string(user_id) + "'";
+        try {
+            pqxx::work W(C);
+            for (auto [id, name] : W.stream<std::size_t, std::string>(query)) {
+                return json{{"user_id", id}, {"user_name", name}}.dump();
+            }
+            return "User not found";
+        } catch (const std::exception &e) {
+            server_error_log << request << query << std::endl;
+            server_error_log << e.what() << std::endl;
+            return fail;
+        }
+    }
 };
 
 typedef websocketpp::server<websocketpp::config::asio> server;
@@ -379,6 +396,7 @@ void on_message(server *s,
     std::string SET_TRELLO_TOKEN = "set_trello_token";
     std::string GET_TRELLO_TOKEN = "get_trello_token";
     std::string GET_CHAT_MEMBERS = "get_chat_members";
+    std::string GET_USER_NAME = "get_user_name";
 
     try {
         if (msg->get_payload().substr(0, ECHO_CMD.size()) == "echo") {
@@ -470,6 +488,12 @@ void on_message(server *s,
             std::size_t chat_id = std::stoi(
                 msg->get_payload().substr(GET_CHAT_MEMBERS.size() + 1));
             std::string message = database->get_chat_members(chat_id);
+            s->send(hdl, message, msg->get_opcode());
+        } else if (msg->get_payload().substr(0, GET_USER_NAME.size()) ==
+                   "get_user_name") {
+            std::size_t user_id =
+                std::stoi(msg->get_payload().substr(GET_USER_NAME.size() + 1));
+            std::string message = database->get_user_name(user_id);
             s->send(hdl, message, msg->get_opcode());
         }
     } catch (const std::exception &e) {
