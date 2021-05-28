@@ -39,7 +39,8 @@ std::size_t curl::write_data(void *ptr,
                              size_t nmemb,
                              void *stream) noexcept {
     static_cast<std::ostream *>(stream)->write(static_cast<char *>(ptr),
-                                                    size * nmemb);
+                                               size * nmemb);
+
     return !static_cast<std::ostream *>(stream)->fail() ? size * nmemb : 0;
 }
 
@@ -66,11 +67,8 @@ void curl::save(std::ostream &output) {
     }
 }
 
-
-
 curl::~curl() {
     curl_easy_cleanup(curl_handle);
 }
-
 
 }  // namespace curl_raii

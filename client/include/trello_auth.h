@@ -25,7 +25,6 @@ private:
     PopUp *up;
     Ui::trello_auth *ui;
     MainWindow *messWindow;
-    json j;
 
 
 private slots:

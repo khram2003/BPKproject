@@ -22,6 +22,7 @@
 #include <nlohmann/json.hpp>
 #include <thread>
 #include <unordered_map>
+#include <clickablelabel.h>
 
 using json = nlohmann::json;
 
@@ -73,6 +74,8 @@ MainWindow::MainWindow(QWidget *parent)
             ui->listWidget,
             SLOT(on_listWidget_2_itemClicked(QListWidgetItem *)));
 
+//    connect(ui->listWidget_2->item(current_chat), )
+
     connect(ui->AddChatButton, &QPushButton::clicked, [this] {
         add_chat *chooseWindow = new add_chat(nullptr, this);
         chooseWindow->show();
@@ -93,13 +96,13 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-    timer_chat->start(600);
+    timer_chat->start(60);
 
     QTimer *timer_message = new QTimer(this);
     connect(timer_message, &QTimer::timeout,
             [this] { update_messages(current_chat_id); });
 
-    timer_message->start(600);
+    timer_message->start(60);
 }
 
 void MainWindow::update_chats() {

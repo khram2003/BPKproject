@@ -7,11 +7,13 @@ ClickableLabel::ClickableLabel(QWidget *parent,
     setText(trello_state);
     setStyleSheet("font: 7pt;");
 
+
 }
 
 ClickableLabel::~ClickableLabel() {
 }
 
 void ClickableLabel::mousePressEvent([[maybe_unused]] QMouseEvent *event) {
+    QLabel::mousePressEvent(event);
     emit clicked();
 }

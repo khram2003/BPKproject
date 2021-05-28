@@ -1,17 +1,17 @@
 #include <chat_view.h>
 #include <trello.h>
 #include <clickablelabel.h>
-#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QLabel>
 #include <QSizePolicy>
 #include <QString>
 #include <QWidget>
 
 ChatView::ChatView(const QString &name) {
-    auto *row = new QVBoxLayout();
-    auto *lbl = new QLabel;
+    row = new QVBoxLayout();
+    lbl = new QLabel;
 
-    auto *clcklabel= new ClickableLabel(Q_NULLPTR, Qt::WindowFlags(), name);
+    clcklabel= new ClickableLabel(Q_NULLPTR, Qt::WindowFlags(), "To get trello info press here");
     lbl->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
     lbl->setWordWrap(true);
     lbl->setText(name);

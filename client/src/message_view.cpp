@@ -23,7 +23,7 @@
     lbl->setText(msg);
     lbl->adjustSize();
     lblim->setStyleSheet(
-        "QLabel { border-radius: 10px, background-color : blue}");
+        "QLabel { border-radius: 10px, background-color : #353535}");
     lblim->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     lblim->setAlignment(Qt::AlignBottom);
     row->addWidget(lblim);
@@ -40,7 +40,7 @@ MessageViewOut::MessageViewOut(const QString &msg) {
     lblim->setPixmap(pm);
     lblim->setScaledContents(true);
     lbl->setStyleSheet(
-        "QLabel { background-color : blue; color : white; border-width: "
+        "QLabel { background-color : #003366; color : white; border-width: "
         "2px; border-radius: 10px; padding: 6px;}");
     QSizePolicy spLeft(QSizePolicy::Minimum, QSizePolicy::Expanding);
     spLeft.setVerticalStretch(1);
@@ -50,7 +50,7 @@ MessageViewOut::MessageViewOut(const QString &msg) {
     lbl->adjustSize();
     lbl->setAlignment(Qt::AlignRight);
     lblim->setStyleSheet(
-        "QLabel { border-radius: 10px, background-color : blue}");
+        "QLabel { border-radius: 10px, background-color : #003366}");
     lblim->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     lblim->setAlignment(Qt::AlignBottom);
     row->addWidget(lbl);

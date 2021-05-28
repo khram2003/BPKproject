@@ -6,6 +6,7 @@
 #include <QMainWindow>
 #include <QStringListModel>
 #include <nlohmann/json.hpp>
+#include <chat_view.h>
 
 using json = nlohmann::json;
 
@@ -57,6 +58,7 @@ private:
     std::size_t current_chat_id;
     PopUp *up;
     std::size_t current_chat_messages_size = 0;
+    ChatView *current_chat_view;
 };
 
 #endif  // MAINWINDOW_H

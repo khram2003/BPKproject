@@ -28,6 +28,8 @@ public:
 
     std::string get_trello_user_id();
 
+    void set_trello_user_id(const std::string &str);
+
     [[nodiscard]] std::string get_trello_token() const;
 
     [[nodiscard]] std::string get_google_token() const;

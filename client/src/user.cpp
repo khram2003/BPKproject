@@ -36,3 +36,6 @@ std::string User::get_google_token() const {
 std::string User::get_trello_user_id() {
     return trello_user_id;
 }
+void User::set_trello_user_id(const std::string &str) {
+    trello_user_id=str;
+}
