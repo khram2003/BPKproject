@@ -1,4 +1,4 @@
-set(CMAKE_CONFIGURATION_TYPES Debug)
+set(CMAKE_CONFIGURATION_TYPES Debug;Release)
 
 cmake_minimum_required(VERSION 3.13)
 
