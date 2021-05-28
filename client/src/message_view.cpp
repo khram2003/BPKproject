@@ -53,7 +53,7 @@ MessageViewOut::MessageViewOut(const QString &msg) {
     lblim->setScaledContents(true);
     lblim->setMask(*region);
     lbl->setStyleSheet(
-        "QLabel { background-color : #003366; color : white; border-width: "
+        "QLabel { background-color : #007ef4; color : white; border-width: "
         "2px; border-radius: 10px; padding: 6px;}");
     QSizePolicy spLeft(QSizePolicy::Minimum, QSizePolicy::Expanding);
     spLeft.setVerticalStretch(1);

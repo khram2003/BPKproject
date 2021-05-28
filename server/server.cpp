@@ -291,7 +291,7 @@ public:
             pqxx::work W(C);
             json j;
             for (auto [id, token] : W.stream<std::size_t, std::string>(query)) {
-                return json{"trello_token", token};
+                return json{{"trello_token", token}}.dump();
             }
             return j.dump();
         } catch (const std::exception &e) {
@@ -311,7 +311,7 @@ public:
             json j;
             for (auto [user, chat] :
                  W.stream<std::size_t, std::size_t>(query)) {
-                j.push_back(json{"user_id", user});
+                j.push_back(json{{"user_id", user}});
             }
             return j.dump();
         } catch (const std::exception &e) {
@@ -462,13 +462,13 @@ void on_message(server *s,
         } else if (msg->get_payload().substr(0, GET_TRELLO_TOKEN.size()) ==
                    "get_trello_token") {
             std::size_t user_id = std::stoi(
-                msg->get_payload().substr(0, GET_TRELLO_TOKEN.size() + 1));
+                msg->get_payload().substr(GET_TRELLO_TOKEN.size() + 1));
             std::string message = database->get_trello_token(user_id);
             s->send(hdl, message, msg->get_opcode());
         } else if (msg->get_payload().substr(0, GET_CHAT_MEMBERS.size()) ==
                    "get_chat_members") {
             std::size_t chat_id = std::stoi(
-                msg->get_payload().substr(0, GET_CHAT_MEMBERS.size() + 1));
+                msg->get_payload().substr(GET_CHAT_MEMBERS.size() + 1));
             std::string message = database->get_chat_members(chat_id);
             s->send(hdl, message, msg->get_opcode());
         }
