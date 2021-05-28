@@ -35,6 +35,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="AddChatButton">
+        <property name="font">
+         <font>
+          <family>Microsoft JhengHei UI</family>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>Add chat</string>
         </property>
@@ -72,6 +78,12 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="font">
+           <font>
+            <family>Microsoft JhengHei</family>
+            <bold>false</bold>
+           </font>
+          </property>
           <property name="text">
            <string>View Trello</string>
           </property>
@@ -84,6 +96,12 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>Microsoft JhengHei</family>
+            <bold>false</bold>
+           </font>
           </property>
           <property name="text">
            <string>Add member</string>

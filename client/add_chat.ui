@@ -28,6 +28,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="AddButton">
+        <property name="font">
+         <font>
+          <family>Microsoft JhengHei</family>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>Add</string>
         </property>
