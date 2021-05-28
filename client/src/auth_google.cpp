@@ -14,7 +14,6 @@
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
-#include <curl_raii.h>
 
 using json = nlohmann::json;
 
@@ -44,24 +43,18 @@ void GoogleAuth::work() {
     google.setModifyParametersFunction(
         [](QAbstractOAuth::Stage stage,
            QMultiMap<QString, QVariant> *parameters) {
-          if (stage == QAbstractOAuth::Stage::RequestingAccessToken) {
-              QByteArray code = parameters->value("code").toByteArray();
-              parameters->remove("code");
-              parameters->insert("code", QUrl::fromPercentEncoding(code));
-          }
+            if (stage == QAbstractOAuth::Stage::RequestingAccessToken) {
+                QByteArray code = parameters->value("code").toByteArray();
+                parameters->remove("code");
+                parameters->insert("code", QUrl::fromPercentEncoding(code));
+            }
         });
 
     auto replyHandler = new QOAuthHttpServerReplyHandler(10002, this);
     google.setReplyHandler(replyHandler);
     connect(&google, &QOAuth2AuthorizationCodeFlow::granted, [&google]() {
-      curl_raii::curl curl;
-      curl.set_url("https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + google.token().toStdString());
-      std::stringstream in;
-      curl.save(in);
-
-      json j = json::parse(in.str());
-      user = User(j["name"].get<std::string>());
-      user.set_google_token(google.token().toStdString());
+        user.set_google_token(google.token().toStdString());
+        user.download_userinfo();
     });
 
     QEventLoop eventLoop{this};

@@ -40,7 +40,7 @@ auth::auth(QWidget *parent) : QMainWindow(parent), ui(new Ui::auth) {
                 endpoint.send_blocking("find_user " + user.get_username());
         }
         json j = json::parse(response);
-        user.add_user_id(j["user_id"]);
+        user.set_user_id(j["user_id"]);
         if (new_user) {
             // Adding first chat
             std::string first_chat = user.get_username() + " notes";

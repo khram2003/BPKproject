@@ -11,7 +11,7 @@
     QHBoxLayout *row = new QHBoxLayout();
     QLabel *lbl = new QLabel;
     QLabel *lblim = new QLabel;
-    QPixmap npm("Sprites/qwertyuiop.jpg");
+    QPixmap npm("Sprites/qwerеyuiop.jpg");
     QPixmap pm = npm.scaled(QSize(50, 50));
     lblim->setPixmap(pm);
     lblim->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -42,7 +42,7 @@ MessageViewOut::MessageViewOut(const QString &msg) {
     QHBoxLayout *row = new QHBoxLayout();
     QLabel *lbl = new QLabel;
     QLabel *lblim = new QLabel;
-    QPixmap npm("Sprites/qwertyuiop.jpg");
+    QPixmap npm("Sprites/avatar.jpg");
     QPixmap pm = npm.scaled(QSize(50, 50));
 
     lblim->setPixmap(pm);

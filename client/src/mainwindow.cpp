@@ -32,11 +32,18 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     this->setWindowTitle("XINU");
-    this->setStyleSheet(".QPushButton {background-color : #191919;border-width: 2px; border-style: solid; border-radius: 10px; padding: 6px;} ");
-    ui->textEdit->setStyleSheet(".QTextEdit {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
-    ui->listWidget->setStyleSheet(".QListWidget {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
-    ui->listWidget_2->setStyleSheet(".QListWidget {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
-
+    this->setStyleSheet(
+        ".QPushButton {background-color : #191919;border-width: 2px; "
+        "border-style: solid; border-radius: 10px; padding: 6px;} ");
+    ui->textEdit->setStyleSheet(
+        ".QTextEdit {background-color : #191919;border-width: 2px; "
+        "border-radius: 10px; padding: 6px;}");
+    ui->listWidget->setStyleSheet(
+        ".QListWidget {background-color : #191919;border-width: 2px; "
+        "border-radius: 10px; padding: 6px;}");
+    ui->listWidget_2->setStyleSheet(
+        ".QListWidget {background-color : #191919;border-width: 2px; "
+        "border-radius: 10px; padding: 6px;}");
 
     update_chats();
     num_of_chats = 0;
@@ -175,18 +182,20 @@ void MainWindow::update_messages(std::size_t chat_id) {
                 item->setSizeHint(row->sizeHint());
                 item->setFont(QFont("Helvetica [Cronyx]", 12));
             } else {
-                response = endpoint.send_blocking("find_user " +
-                                                  std::to_string(sender_id));
-                if (response == "FAIL") {
-                    up = new PopUp();
-                    up->setPopupText(
-                        "Oops! Something went wrong... Don't worry that's on "
-                        "us.");
-                    up->show();
-                }
-                json user_info = json::parse(response);
+                //                response = endpoint.send_blocking("find_user "
+                //                +
+                //                                                  std::to_string(sender_id));
+                //                if (response == "FAIL") {
+                //                    up = new PopUp();
+                //                    up->setPopupText(
+                //                        "Oops! Something went wrong... Don't
+                //                        worry that's on " "us.");
+                //                    up->show();
+                //                }
+                //                json user_info = json::parse(response);
                 MessageViewIn *row = new MessageViewIn(QString::fromStdString(
-                    user_info["user_name"].get<std::string>() + ": " +
+                    //                    user_info["user_name"].get<std::string>()
+                    //                    + ": " +
                     mess["message_text"].get<std::string>()));
                 row->setSizePolicy(QSizePolicy::Preferred,
                                    QSizePolicy::Preferred);
