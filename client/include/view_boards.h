@@ -11,11 +11,11 @@ class view_boards;
 }
 
 class view_boards : public QMainWindow {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     explicit view_boards(QWidget *parent = nullptr,
-                        MainWindow *messWin = nullptr);
+                         MainWindow *messWin = nullptr);
 
     ~view_boards() override;
 

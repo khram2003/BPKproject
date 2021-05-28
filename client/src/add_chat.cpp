@@ -18,9 +18,12 @@ add_chat::add_chat(QWidget *parent, MainWindow *messWin)
     ui->setupUi(this);
 
     this->setWindowTitle("Add chat");
-    this->setStyleSheet(".QPushButton {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
-    ui->lineEdit->setStyleSheet(".QLineEdit {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
-
+    this->setStyleSheet(
+        ".QPushButton {background-color : #191919;border-width: 2px; "
+        "border-radius: 10px; padding: 6px;}");
+    ui->lineEdit->setStyleSheet(
+        ".QLineEdit {background-color : #191919;border-width: 2px; "
+        "border-radius: 10px; padding: 6px;}");
 
     connect(ui->AddButton, &QPushButton::clicked, [this] {
         std::string chat_name = ui->lineEdit->text().toStdString();
