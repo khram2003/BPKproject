@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>832</width>
-    <height>300</height>
+    <width>800</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,7 +53,6 @@
          <widget class="QLabel" name="label">
           <property name="font">
            <font>
-            <family>Segoe UI Semibold</family>
             <pointsize>15</pointsize>
            </font>
           </property>
@@ -61,7 +60,20 @@
            <bool>true</bool>
           </property>
           <property name="text">
-           <string>flexxx</string>
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="viewBoardsButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>View Trello</string>
           </property>
          </widget>
         </item>

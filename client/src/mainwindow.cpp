@@ -9,6 +9,7 @@
 #include <ui_add_member.h>
 #include <ui_mainwindow.h>
 #include <user.h>
+#include <view_boards.h>
 #include <QBrush>
 #include <QColor>
 #include <QFont>
@@ -29,6 +30,13 @@ using json = nlohmann::json;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
+
+    this->setWindowTitle("XINU");
+    this->setStyleSheet(".QPushButton {background-color : #191919;border-width: 2px; border-style: solid; border-radius: 10px; padding: 6px;} ");
+    ui->textEdit->setStyleSheet(".QTextEdit {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
+    ui->listWidget->setStyleSheet(".QListWidget {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
+    ui->listWidget_2->setStyleSheet(".QListWidget {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
+
 
     update_chats();
     num_of_chats = 0;
@@ -84,6 +92,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->memberButton, &QPushButton::clicked, [this] {
         add_member *memberWindow = new add_member(nullptr, this);
         memberWindow->show();
+    });
+
+    connect(ui->viewBoardsButton, &QPushButton::clicked, [this] {
+        view_boards *viewBrdWindow = new view_boards(nullptr, this);
+        viewBrdWindow->show();
     });
 
     QTimer *timer_chat = new QTimer(this);

@@ -15,6 +15,7 @@ using json = nlohmann::json;
 auth::auth(QWidget *parent) : QMainWindow(parent), ui(new Ui::auth) {
     ui->setupUi(this);
 
+    this->setWindowTitle("Authentifucation");
     bool new_user = false;
 
     connect(ui->AuthButton, &QPushButton::clicked, [this, new_user]() mutable {

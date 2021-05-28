@@ -12,7 +12,6 @@ public:
     ChatView(const QString &name);
     QVBoxLayout *row;
     QLabel *lbl;
-    ClickableLabel *clcklabel;
 };
 
 #endif  // CHAT_VIEW_H

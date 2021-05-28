@@ -11,12 +11,10 @@ ChatView::ChatView(const QString &name) {
     row = new QVBoxLayout();
     lbl = new QLabel;
 
-    clcklabel= new ClickableLabel(Q_NULLPTR, Qt::WindowFlags(), "To get trello info press here");
     lbl->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
     lbl->setWordWrap(true);
     lbl->setText(name);
     row->addWidget(lbl);
-    row->addWidget(clcklabel);
     setLayout(row);
 }
 

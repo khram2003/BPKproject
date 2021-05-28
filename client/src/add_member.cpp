@@ -17,6 +17,11 @@ add_member::add_member(QWidget *parent, MainWindow *messWin)
     : QMainWindow(parent), ui(new Ui::add_member), mess(messWin) {
     ui->setupUi(this);
 
+    this->setWindowTitle("Add member to chat");
+    this->setStyleSheet(".QPushButton {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
+    ui->lineEdit->setStyleSheet(".QLineEdit {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
+
+
     connect(ui->AddButton, &QPushButton::clicked, [this] {
         std::string user_name = ui->lineEdit->text().toStdString();
         std::string user_exists;

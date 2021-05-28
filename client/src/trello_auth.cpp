@@ -24,6 +24,13 @@ trello_auth::trello_auth(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::trello_auth) {
     ui->setupUi(this);
 
+    this->setWindowTitle("Trello Authentifucation");
+    this->setStyleSheet(".QPushButton {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
+
+    ui->lineEdit_2->setStyleSheet(".QLineEdit {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
+    ui->textBrowser->setStyleSheet(".QTextBrowser {background-color : #191919;border-width: 2px; border-radius: 10px; padding: 6px;}");
+
+
     connect(ui->TrelloButton, &QPushButton::clicked, [] {
         QString requ =
             "https://trello.com/1/"

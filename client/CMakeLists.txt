@@ -2,7 +2,7 @@ set(CMAKE_CONFIGURATION_TYPES Debug;Release)
 
 cmake_minimum_required(VERSION 3.13)
 
-project(BPK VERSION 1.0.0 LANGUAGES CXX)
+project(XINU VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -25,7 +25,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(RESOURCE resources.qrc)
-set(UI mainwindow.ui auth.ui add_chat.ui trello_auth.ui add_member.ui)
+set(UI mainwindow.ui auth.ui add_chat.ui trello_auth.ui add_member.ui view_boards.ui)
 qt6_wrap_ui(UI_HEADERS ${UI})
 
 set(SOURCES
@@ -59,7 +59,7 @@ set(SOURCES
         include/auth_google.h
         include/add_member.h
         include/curl_raii.h
-        include/clickablelabel.h)
+        include/clickablelabel.h src/view_boards.cpp include/view_boards.h)
 
 
 set(NETWORKING_LIBS)
