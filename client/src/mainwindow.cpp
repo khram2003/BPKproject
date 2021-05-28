@@ -89,8 +89,6 @@ MainWindow::MainWindow(QWidget *parent)
             ui->listWidget,
             SLOT(on_listWidget_2_itemClicked(QListWidgetItem *)));
 
-    //    connect(ui->listWidget_2->item(current_chat), )
-
     connect(ui->AddChatButton, &QPushButton::clicked, [this] {
         add_chat *chooseWindow = new add_chat(nullptr, this);
         chooseWindow->show();
@@ -182,20 +180,18 @@ void MainWindow::update_messages(std::size_t chat_id) {
                 item->setSizeHint(row->sizeHint());
                 item->setFont(QFont("Helvetica [Cronyx]", 12));
             } else {
-                //                response = endpoint.send_blocking("find_user "
-                //                +
-                //                                                  std::to_string(sender_id));
-                //                if (response == "FAIL") {
-                //                    up = new PopUp();
-                //                    up->setPopupText(
-                //                        "Oops! Something went wrong... Don't
-                //                        worry that's on " "us.");
-                //                    up->show();
-                //                }
-                //                json user_info = json::parse(response);
+                response = endpoint.send_blocking("get_user_name " +
+                                                  std::to_string(sender_id));
+                if (response == "FAIL") {
+                    up = new PopUp();
+                    up->setPopupText(
+                        "Oops! Something went wrong... Don't worry that's on "
+                        "us.");
+                    up->show();
+                }
+                json user_info = json::parse(response);
                 MessageViewIn *row = new MessageViewIn(QString::fromStdString(
-                    //                    user_info["user_name"].get<std::string>()
-                    //                    + ": " +
+                    user_info["user_name"].get<std::string>() + ": " +
                     mess["message_text"].get<std::string>()));
                 row->setSizePolicy(QSizePolicy::Preferred,
                                    QSizePolicy::Preferred);
