@@ -281,6 +281,45 @@ public:
             return fail;
         }
     }
+
+    std::string get_trello_token(std::size_t user_id) {
+        std::string query =
+            "SELECT user_id, trello_token FROM UserID_TrelloToken WHERE "
+            "user_id = " +
+            std::to_string(user_id);
+        try {
+            pqxx::work W(C);
+            json j;
+            for (auto [id, token] : W.stream<std::size_t, std::string>(query)) {
+                return json{"trello_token", token};
+            }
+            return j.dump();
+        } catch (const std::exception &e) {
+            server_error_log << request << query << std::endl;
+            server_error_log << e.what() << std::endl;
+            return fail;
+        }
+    }
+
+    std::string get_chat_members(std::size_t chat_id) {
+        std::string query =
+            "SELECT user_id, chat_id FROM UserID_ChatID WHERE "
+            "chat_id = " +
+            std::to_string(chat_id);
+        try {
+            pqxx::work W(C);
+            json j;
+            for (auto [user, chat] :
+                 W.stream<std::size_t, std::size_t>(query)) {
+                j.push_back(json{"user_id", user});
+            }
+            return j.dump();
+        } catch (const std::exception &e) {
+            server_error_log << request << query << std::endl;
+            server_error_log << e.what() << std::endl;
+            return fail;
+        }
+    }
 };
 
 typedef websocketpp::server<websocketpp::config::asio> server;
@@ -338,6 +377,8 @@ void on_message(server *s,
     std::string GET_CHAT_HISTORY = "get_chat_history";
     std::string GET_CHAT_LIST = "get_chat_list";
     std::string SET_TRELLO_TOKEN = "set_trello_token";
+    std::string GET_TRELLO_TOKEN = "get_trello_token";
+    std::string GET_CHAT_MEMBERS = "get_chat_members";
 
     try {
         if (msg->get_payload().substr(0, ECHO_CMD.size()) == "echo") {
@@ -417,6 +458,18 @@ void on_message(server *s,
             std::getline(ss, trello_token);
             std::string message =
                 database->set_trello_token(user_id, trello_token);
+            s->send(hdl, message, msg->get_opcode());
+        } else if (msg->get_payload().substr(0, GET_TRELLO_TOKEN.size()) ==
+                   "get_trello_token") {
+            std::size_t user_id = std::stoi(
+                msg->get_payload().substr(0, GET_TRELLO_TOKEN.size() + 1));
+            std::string message = database->get_trello_token(user_id);
+            s->send(hdl, message, msg->get_opcode());
+        } else if (msg->get_payload().substr(0, GET_CHAT_MEMBERS.size()) ==
+                   "get_chat_members") {
+            std::size_t chat_id = std::stoi(
+                msg->get_payload().substr(0, GET_CHAT_MEMBERS.size() + 1));
+            std::string message = database->get_chat_members(chat_id);
             s->send(hdl, message, msg->get_opcode());
         }
     } catch (const std::exception &e) {
