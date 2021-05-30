@@ -1,7 +1,6 @@
 #include <add_chat.h>
 #include <add_member.h>
 #include <chat_view.h>
-#include <clickablelabel.h>
 #include <mainwindow.h>
 #include <message_view.h>
 #include <popup.h>
@@ -192,14 +191,16 @@ void MainWindow::update_messages(std::size_t chat_id) {
             if (sender_id == user.get_user_id()) {
                 MessageViewOut *row = new MessageViewOut(QString::fromStdString(
                     mess["message_text"].get<std::string>()));
-                row->setSizePolicy(QSizePolicy::Preferred,
-                                   QSizePolicy::Preferred);
+                row->setSizePolicy(QSizePolicy::Expanding,
+                                   QSizePolicy::Expanding);
                 ui->listWidget->setSizeAdjustPolicy(
                     QListWidget::AdjustToContents);
                 ui->listWidget->setWordWrap(true);
                 ui->listWidget->addItem(item);
                 ui->listWidget->setItemWidget(item, row);
+                //                ui->listWidget->setSizePolicy()
                 item->setSizeHint(row->sizeHint());
+
                 item->setFont(QFont("Helvetica [Cronyx]", 12));
             } else {
                 response = endpoint.send_blocking("get_user_name " +
@@ -213,9 +214,11 @@ void MainWindow::update_messages(std::size_t chat_id) {
                 }
                 json user_info = json::parse(response);
 
-                MessageViewIn *row = new MessageViewIn(QString::fromStdString(
-                    user_info["user_name"].get<std::string>() + ": " +
-                    mess["message_text"].get<std::string>()));
+                MessageViewIn *row = new MessageViewIn(
+                    QString::fromStdString(
+                        mess["message_text"].get<std::string>()),
+                    QString::fromStdString(
+                        user_info["user_name"].get<std::string>()));
                 row->setSizePolicy(QSizePolicy::Preferred,
                                    QSizePolicy::Preferred);
                 ui->listWidget->setSizeAdjustPolicy(

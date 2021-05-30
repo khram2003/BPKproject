@@ -3,9 +3,8 @@
 
 #include <QLabel>
 #include <QString>
-#include <QWidget>
 #include <QVBoxLayout>
-#include <clickablelabel.h>
+#include <QWidget>
 
 class ChatView : public QWidget {
 public:

@@ -11,7 +11,7 @@ public:
 
 class MessageViewIn : public QWidget {
 public:
-    MessageViewIn(const QString &msg);
+    MessageViewIn(const QString &msg, const QString &author);
 };
 
 #endif  // MESSAGE_VIEW_H
