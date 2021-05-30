@@ -117,6 +117,7 @@ void view_boards::on_listWidget_itemClicked(
     req = "https://api.trello.com/1/boards/" + icon_to_board_id[item] +
           "?key=" + trello.get_api_key().toStdString() +
           "&token=" + user_trello_token;
+
     crl.set_url(req);
     std::stringstream in1;
     crl.save(in1);
