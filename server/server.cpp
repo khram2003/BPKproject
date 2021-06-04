@@ -80,6 +80,15 @@ public:
         } catch (std::exception const &e) {
             std::cerr << error_message << std::endl;
         }
+        try {
+            create_table =
+                "CREATE TABLE IF NOT EXISTS ChatID_BoardID (chat_id BIGINT NOT "
+                "NULL, board_id TEXT NOT NULL UNIQUE, FOREIGN KEY(chat_id) "
+                "REFERENCES Chats(chat_id))";
+            W.exec(create_table);
+        } catch (std::exception const &e) {
+            std::cerr << error_message << std::endl;
+        }
         W.commit();
     }
 
@@ -301,6 +310,43 @@ public:
         }
     }
 
+    std::string set_board_id(std::size_t chat_id, std::string &board_id) {
+        board_id = std::regex_replace(board_id, std::regex("\'"), "\'\'");
+        std::string insert_into =
+            "INSERT INTO ChatID_BoardID (chat_id, board_id) Values (" +
+            std::to_string(chat_id) + ", '" + board_id + "')";
+        try {
+            pqxx::work W(C);
+            W.exec(insert_into);
+            W.commit();
+            return success;
+        } catch (const std::exception &e) {
+            server_error_log << request << insert_into << std::endl;
+            server_error_log << e.what() << std::endl;
+            return fail;
+        }
+    }
+
+    std::string get_board_id(std::size_t chat_id) {
+        std::string query =
+            "SELECT chat_id, board_id FROM ChatID_BoardID WHERE "
+            "chat_id = " +
+            std::to_string(chat_id);
+        try {
+            pqxx::work W(C);
+            json j;
+            for (auto [chat, board] :
+                 W.stream<std::size_t, std::string>(query)) {
+                return json{{"chat_id", chat}, {"board_id", board}}.dump();
+            }
+            return j.dump();
+        } catch (const std::exception &e) {
+            server_error_log << request << query << std::endl;
+            server_error_log << e.what() << std::endl;
+            return fail;
+        }
+    }
+
     std::string get_chat_members(std::size_t chat_id) {
         std::string query =
             "SELECT user_id, chat_id FROM UserID_ChatID WHERE "
@@ -395,6 +441,8 @@ void on_message(server *s,
     std::string GET_CHAT_LIST = "get_chat_list";
     std::string SET_TRELLO_TOKEN = "set_trello_token";
     std::string GET_TRELLO_TOKEN = "get_trello_token";
+    std::string SET_BOARD_ID = "set_board_id";
+    std::string GET_BOARD_ID = "get_board_id";
     std::string GET_CHAT_MEMBERS = "get_chat_members";
     std::string GET_USER_NAME = "get_user_name";
 
@@ -482,6 +530,23 @@ void on_message(server *s,
             std::size_t user_id = std::stoi(
                 msg->get_payload().substr(GET_TRELLO_TOKEN.size() + 1));
             std::string message = database->get_trello_token(user_id);
+            s->send(hdl, message, msg->get_opcode());
+        } else if (msg->get_payload().substr(0, GET_BOARD_ID.size()) ==
+                   "get_board_id") {
+            std::size_t chat_id =
+                std::stoi(msg->get_payload().substr(GET_BOARD_ID.size() + 1));
+            std::string message = database->get_board_id(chat_id);
+            s->send(hdl, message, msg->get_opcode());
+        } else if (msg->get_payload().substr(0, SET_BOARD_ID.size()) ==
+                   "set_board_id") {
+            std::stringstream ss(
+                msg->get_payload().substr(SET_BOARD_ID.size() + 1));
+            std::size_t chat_id = 0;
+            ss >> chat_id;
+            ss.ignore(1);
+            std::string board_id;
+            std::getline(ss, board_id);
+            std::string message = database->set_board_id(chat_id, board_id);
             s->send(hdl, message, msg->get_opcode());
         } else if (msg->get_payload().substr(0, GET_CHAT_MEMBERS.size()) ==
                    "get_chat_members") {
