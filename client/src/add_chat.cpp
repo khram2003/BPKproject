@@ -12,6 +12,7 @@
 #include <QWidget>
 #include <iostream>
 #include <nlohmann/json.hpp>
+#include <regex>
 #include <sstream>
 #include <string>
 
@@ -56,14 +57,14 @@ add_chat::add_chat(QWidget *parent, MainWindow *messWin)
                               trello.get_api_key().toStdString() +
                               "&token=" + user_trello_token;
             curl_raii::curl crl1;
+            std::string chat_name_changed = std::regex_replace(chat_name, std::regex(" "), "");
             crl1.set_url(req);
-            crl1.post_mode("&name=" + chat_name);
+            crl1.post_mode("&name=" + chat_name_changed);
             crl1.send();
 
             req = "https://api.trello.com/1/tokens/" + user_trello_token +
                   "/member?key=" + trello.get_api_key().toStdString() +
                   "&token=" + user_trello_token;
-            std::cout << req << '\n';
             curl_raii::curl crl;
             crl.set_url(req);
             std::stringstream in;
@@ -78,7 +79,6 @@ add_chat::add_chat(QWidget *parent, MainWindow *messWin)
             crl.set_url(req);
             std::stringstream in1;
             crl.save(in1);
-            std::cout << "qwertyuiokjhgc";
             json_string = in1.str();
             j = json::parse(json_string);
             std::string board_id;
@@ -87,6 +87,7 @@ add_chat::add_chat(QWidget *parent, MainWindow *messWin)
                     board_id = board["id"];
                 }
             }
+            std::cout<<board_id;
             response = endpoint.send_blocking("get_chat_id " + chat_name);
             if (response == "FAIL") {
                 up = new PopUp();

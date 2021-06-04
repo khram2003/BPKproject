@@ -111,54 +111,42 @@ MainWindow::MainWindow(QWidget *parent)
             up->show();
         }
         json j = json::parse(response);
-        if (j.size() == 2) {
-            for (auto user_id : j) {
-                if (user_id["user_id"] != user.get_user_id()) {
-                    chatter = user_id["user_id"];
-                    break;
-                }
-            }
-
-            view_boards *viewBrdWindow = new view_boards(nullptr, this);
-            viewBrdWindow->show();
-        } else {
-            response = endpoint.send_blocking(
-                "get_trello_token " + std::to_string(user.get_user_id()));
-            if (response == "FAIL") {
-                up = new PopUp();
-                up->setPopupText(
-                    "Oops! Something went wrong... Don't worry that's on us.");
-                up->show();
-            }
-            j = json::parse(response);
-            std::string user_trello_token = j["trello_token"];
-
-            response = endpoint.send_blocking("get_board_id " +
-                                              std::to_string(current_chat_id));
-            if (response == "FAIL") {
-                up = new PopUp();
-                up->setPopupText(
-                    "Oops! Something went wrong... Don't worry that's on us.");
-                up->show();
-            }
-            j = json::parse(response);
-            std::string board_id = j["board_id"];
-
-            std::string req;
-            curl_raii::curl crl;
-            req = "https://api.trello.com/1/boards/" + board_id +
-                  "?key=" + trello.get_api_key().toStdString() +
-                  "&token=" + user_trello_token;
-
-            crl.set_url(req);
-            std::stringstream in1;
-            crl.save(in1);
-            j = json::parse(in1.str());
-
-            auto board_url = j["url"].get<std::string>();
-            QDesktopServices::openUrl(
-                QUrl(QString::fromUtf8(board_url.c_str()), QUrl::TolerantMode));
+        response = endpoint.send_blocking("get_trello_token " +
+                                          std::to_string(user.get_user_id()));
+        if (response == "FAIL") {
+            up = new PopUp();
+            up->setPopupText(
+                "Oops! Something went wrong... Don't worry that's on us.");
+            up->show();
         }
+        j = json::parse(response);
+        std::string user_trello_token = j["trello_token"];
+
+        response = endpoint.send_blocking("get_board_id " +
+                                          std::to_string(current_chat_id));
+        if (response == "FAIL") {
+            up = new PopUp();
+            up->setPopupText(
+                "Oops! Something went wrong... Don't worry that's on us.");
+            up->show();
+        }
+        j = json::parse(response);
+        std::string board_id = j["board_id"];
+
+        std::string req;
+        curl_raii::curl crl;
+        req = "https://api.trello.com/1/boards/" + board_id +
+              "?key=" + trello.get_api_key().toStdString() +
+              "&token=" + user_trello_token;
+
+        crl.set_url(req);
+        std::stringstream in1;
+        crl.save(in1);
+        j = json::parse(in1.str());
+
+        auto board_url = j["url"].get<std::string>();
+        QDesktopServices::openUrl(
+            QUrl(QString::fromUtf8(board_url.c_str()), QUrl::TolerantMode));
     });
 
     QTimer *timer_chat = new QTimer(this);
