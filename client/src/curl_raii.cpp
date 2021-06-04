@@ -77,6 +77,11 @@ void curl::send() {
     check_error(res);
 }
 
+void curl::post_mode(const std::string &param) {
+    auto res = curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, param.c_str());
+    check_error(res);
+}
+
 curl::~curl() {
     curl_easy_cleanup(curl_handle);
 }

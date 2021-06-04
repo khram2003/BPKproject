@@ -1,16 +1,19 @@
 #include <add_chat.h>
 #include <add_member.h>
 #include <chat_view.h>
+#include <curl_raii.h>
 #include <mainwindow.h>
 #include <message_view.h>
 #include <popup.h>
 #include <socket.h>
+#include <trello.h>
 #include <ui_add_member.h>
 #include <ui_mainwindow.h>
 #include <user.h>
 #include <view_boards.h>
 #include <QBrush>
 #include <QColor>
+#include <QDesktopServices>
 #include <QFont>
 #include <QListWidgetItem>
 #include <QMainWindow>
@@ -119,9 +122,42 @@ MainWindow::MainWindow(QWidget *parent)
             view_boards *viewBrdWindow = new view_boards(nullptr, this);
             viewBrdWindow->show();
         } else {
-            up = new PopUp();
-            up->setPopupText("Trello View is not available for group chats.");
-            up->show();
+            response = endpoint.send_blocking(
+                "get_trello_token " + std::to_string(user.get_user_id()));
+            if (response == "FAIL") {
+                up = new PopUp();
+                up->setPopupText(
+                    "Oops! Something went wrong... Don't worry that's on us.");
+                up->show();
+            }
+            j = json::parse(response);
+            std::string user_trello_token = j["trello_token"];
+
+            response = endpoint.send_blocking("get_board_id " +
+                                              std::to_string(current_chat_id));
+            if (response == "FAIL") {
+                up = new PopUp();
+                up->setPopupText(
+                    "Oops! Something went wrong... Don't worry that's on us.");
+                up->show();
+            }
+            j = json::parse(response);
+            std::string board_id = j["board_id"];
+
+            std::string req;
+            curl_raii::curl crl;
+            req = "https://api.trello.com/1/boards/" + board_id +
+                  "?key=" + trello.get_api_key().toStdString() +
+                  "&token=" + user_trello_token;
+
+            crl.set_url(req);
+            std::stringstream in1;
+            crl.save(in1);
+            j = json::parse(in1.str());
+
+            auto board_url = j["url"].get<std::string>();
+            QDesktopServices::openUrl(
+                QUrl(QString::fromUtf8(board_url.c_str()), QUrl::TolerantMode));
         }
     });
 
