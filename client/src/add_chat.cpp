@@ -57,9 +57,9 @@ add_chat::add_chat(QWidget *parent, MainWindow *messWin)
                               trello.get_api_key().toStdString() +
                               "&token=" + user_trello_token;
             curl_raii::curl crl1;
-            std::string chat_name_changed = std::regex_replace(chat_name, std::regex(" "), "");
+//            std::string chat_name_changed = std::regex_replace(chat_name, std::regex(" "), "");
             crl1.set_url(req);
-            crl1.post_mode("&name=" + chat_name_changed);
+            crl1.post_mode("&name=" + chat_name);
             crl1.send();
 
             req = "https://api.trello.com/1/tokens/" + user_trello_token +
@@ -83,8 +83,8 @@ add_chat::add_chat(QWidget *parent, MainWindow *messWin)
             j = json::parse(json_string);
             std::string board_id;
             for (auto board : j) {
-                if (board["name"] == chat_name) {
-                    board_id = board["id"];
+                if (board["name"].get<std::string>() == chat_name) {
+                    board_id = board["id"].get<std::string>();
                 }
             }
             std::cout<<board_id;
