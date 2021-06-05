@@ -57,10 +57,13 @@ add_chat::add_chat(QWidget *parent, MainWindow *messWin)
                               trello.get_api_key().toStdString() +
                               "&token=" + user_trello_token;
             curl_raii::curl crl1;
-//            std::string chat_name_changed = std::regex_replace(chat_name, std::regex(" "), "");
+            std::string chat_name_changed = std::regex_replace(chat_name, std::regex(" "), "%20");
             crl1.set_url(req);
-            crl1.post_mode("&name=" + chat_name);
+            crl1.post_mode("&name=" + chat_name_changed);
+            //TODO MULTIPLE SPACES PROBLEM
+            std::cout.flush();
             crl1.send();
+            std::cout.flush();  // TODO FIX THIS
 
             req = "https://api.trello.com/1/tokens/" + user_trello_token +
                   "/member?key=" + trello.get_api_key().toStdString() +
@@ -81,13 +84,18 @@ add_chat::add_chat(QWidget *parent, MainWindow *messWin)
             crl.save(in1);
             json_string = in1.str();
             j = json::parse(json_string);
-            std::string board_id;
+            std::string board_id = "BOARD NOT FOUND";
             for (auto board : j) {
                 if (board["name"].get<std::string>() == chat_name) {
                     board_id = board["id"].get<std::string>();
                 }
             }
-            std::cout<<board_id;
+            if (board_id == "BOARD NOT FOUND") {
+                up = new PopUp();
+                up->setPopupText(
+                    "Oops! Something went wrong... Don't worry that's on us.");
+                up->show();
+            }
             response = endpoint.send_blocking("get_chat_id " + chat_name);
             if (response == "FAIL") {
                 up = new PopUp();
@@ -104,7 +112,6 @@ add_chat::add_chat(QWidget *parent, MainWindow *messWin)
                     "Oops! Something went wrong... Don't worry that's on us.");
                 up->show();
             }
-            //            j = json::parse(response);
             response = endpoint.send_blocking(
                 "link_user_to_chat " + std::to_string(user.get_user_id()) +
                 " " + j["chat_id"].dump());
