@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>500</height>
+    <width>1269</width>
+    <height>754</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,7 +37,6 @@
        <widget class="QPushButton" name="AddChatButton">
         <property name="font">
          <font>
-          <family>Microsoft JhengHei UI</family>
           <bold>true</bold>
          </font>
         </property>
@@ -80,7 +79,6 @@
           </property>
           <property name="font">
            <font>
-            <family>Microsoft JhengHei</family>
             <bold>false</bold>
            </font>
           </property>
@@ -99,7 +97,6 @@
           </property>
           <property name="font">
            <font>
-            <family>Microsoft JhengHei</family>
             <bold>false</bold>
            </font>
           </property>
@@ -109,16 +106,6 @@
          </widget>
         </item>
        </layout>
-      </item>
-      <item row="3" column="0">
-       <widget class="QListWidget" name="listWidget">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
       </item>
       <item row="4" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -158,6 +145,16 @@
          </widget>
         </item>
        </layout>
+      </item>
+      <item row="3" column="0">
+       <widget class="QListWidget" name="listWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

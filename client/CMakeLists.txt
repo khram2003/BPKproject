@@ -26,6 +26,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(RESOURCE resources.qrc)
 set(UI mainwindow.ui auth.ui add_chat.ui trello_auth.ui add_member.ui view_boards.ui)
+set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/resources.qrc")
 qt6_wrap_ui(UI_HEADERS ${UI})
 
 set(SOURCES
@@ -43,7 +44,8 @@ set(SOURCES
         src/auth_google.cpp
         src/add_member.cpp
         src/curl_raii.cpp
-        src/clickablelabel.cpp
+        src/view_boards.cpp
+        src/autowraplabel.cpp
 
 
         include/mainwindow.h
@@ -59,7 +61,8 @@ set(SOURCES
         include/auth_google.h
         include/add_member.h
         include/curl_raii.h
-        include/clickablelabel.h src/view_boards.cpp include/view_boards.h)
+        include/view_boards.h
+        include/autowraplabel.h)
 
 
 set(NETWORKING_LIBS)
@@ -67,7 +70,7 @@ if (WIN32 AND NOT MSVC AND NOT BORLAND)
     set(NETWORKING_LIBS "ws2_32")
 endif ()
 
-add_executable(${PROJECT_NAME} ${UI} ${SOURCES})
+add_executable(${PROJECT_NAME} ${UI} ${SOURCES} ${APP_ICON_RESOURCE_WINDOWS})
 set_target_properties(
         ${PROJECT_NAME}
         PROPERTIES

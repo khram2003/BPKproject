@@ -1,10 +1,9 @@
 #include <chat_view.h>
 #include <trello.h>
-#include <clickablelabel.h>
-#include <QVBoxLayout>
 #include <QLabel>
 #include <QSizePolicy>
 #include <QString>
+#include <QVBoxLayout>
 #include <QWidget>
 
 ChatView::ChatView(const QString &name) {
@@ -17,4 +16,3 @@ ChatView::ChatView(const QString &name) {
     row->addWidget(lbl);
     setLayout(row);
 }
-

@@ -1,5 +1,6 @@
 #include <curl/curl.h>
 #include <curl_raii.h>
+#include <iostream>
 #include <sstream>
 #include <string>
 
@@ -74,6 +75,13 @@ void curl::upload_mode() {
 
 void curl::send() {
     auto res = curl_easy_perform(curl_handle);
+    check_error(res);
+}
+
+void curl::post_mode(const std::string &param) {
+    auto res = curl_easy_setopt(curl_handle, CURLOPT_POST, 1L);
+    check_error(res);
+    res = curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, param.data());
     check_error(res);
 }
 

@@ -1,17 +1,19 @@
 #include <add_chat.h>
 #include <add_member.h>
 #include <chat_view.h>
-#include <clickablelabel.h>
+#include <curl_raii.h>
 #include <mainwindow.h>
 #include <message_view.h>
 #include <popup.h>
 #include <socket.h>
+#include <trello.h>
 #include <ui_add_member.h>
 #include <ui_mainwindow.h>
 #include <user.h>
 #include <view_boards.h>
 #include <QBrush>
 #include <QColor>
+#include <QDesktopServices>
 #include <QFont>
 #include <QListWidgetItem>
 #include <QMainWindow>
@@ -109,21 +111,42 @@ MainWindow::MainWindow(QWidget *parent)
             up->show();
         }
         json j = json::parse(response);
-        if (j.size() == 2) {
-            for (auto user_id : j) {
-                if (user_id["user_id"] != user.get_user_id()) {
-                    chatter = user_id["user_id"];
-                    break;
-                }
-            }
-
-            view_boards *viewBrdWindow = new view_boards(nullptr, this);
-            viewBrdWindow->show();
-        } else {
+        response = endpoint.send_blocking("get_trello_token " +
+                                          std::to_string(user.get_user_id()));
+        if (response == "FAIL") {
             up = new PopUp();
-            up->setPopupText("Trello View is not available for group chats.");
+            up->setPopupText(
+                "Oops! Something went wrong... Don't worry that's on us.");
             up->show();
         }
+        j = json::parse(response);
+        std::string user_trello_token = j["trello_token"];
+
+        response = endpoint.send_blocking("get_board_id " +
+                                          std::to_string(current_chat_id));
+        if (response == "FAIL") {
+            up = new PopUp();
+            up->setPopupText(
+                "Oops! Something went wrong... Don't worry that's on us.");
+            up->show();
+        }
+        j = json::parse(response);
+        std::string board_id = j["board_id"];
+
+        std::string req;
+        curl_raii::curl crl;
+        req = "https://api.trello.com/1/boards/" + board_id +
+              "?key=" + trello.get_api_key().toStdString() +
+              "&token=" + user_trello_token;
+
+        crl.set_url(req);
+        std::stringstream in1;
+        crl.save(in1);
+        j = json::parse(in1.str());
+
+        auto board_url = j["url"].get<std::string>();
+        QDesktopServices::openUrl(
+            QUrl(QString::fromUtf8(board_url.c_str()), QUrl::TolerantMode));
     });
 
     QTimer *timer_chat = new QTimer(this);
@@ -192,14 +215,16 @@ void MainWindow::update_messages(std::size_t chat_id) {
             if (sender_id == user.get_user_id()) {
                 MessageViewOut *row = new MessageViewOut(QString::fromStdString(
                     mess["message_text"].get<std::string>()));
-                row->setSizePolicy(QSizePolicy::Preferred,
-                                   QSizePolicy::Preferred);
+                row->setSizePolicy(QSizePolicy::Expanding,
+                                   QSizePolicy::Expanding);
                 ui->listWidget->setSizeAdjustPolicy(
                     QListWidget::AdjustToContents);
                 ui->listWidget->setWordWrap(true);
                 ui->listWidget->addItem(item);
                 ui->listWidget->setItemWidget(item, row);
+                //                ui->listWidget->setSizePolicy()
                 item->setSizeHint(row->sizeHint());
+
                 item->setFont(QFont("Helvetica [Cronyx]", 12));
             } else {
                 response = endpoint.send_blocking("get_user_name " +
@@ -213,9 +238,11 @@ void MainWindow::update_messages(std::size_t chat_id) {
                 }
                 json user_info = json::parse(response);
 
-                MessageViewIn *row = new MessageViewIn(QString::fromStdString(
-                    user_info["user_name"].get<std::string>() + ": " +
-                    mess["message_text"].get<std::string>()));
+                MessageViewIn *row = new MessageViewIn(
+                    QString::fromStdString(
+                        mess["message_text"].get<std::string>()),
+                    QString::fromStdString(
+                        user_info["user_name"].get<std::string>()));
                 row->setSizePolicy(QSizePolicy::Preferred,
                                    QSizePolicy::Preferred);
                 ui->listWidget->setSizeAdjustPolicy(

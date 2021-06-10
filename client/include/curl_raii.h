@@ -39,6 +39,8 @@ public:
 
     void send();
 
+    void post_mode(const std::string& param);
+
     ~curl();
 };
 }  // namespace curl_raii
